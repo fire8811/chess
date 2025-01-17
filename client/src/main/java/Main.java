@@ -6,3 +6,4 @@ public class Main {
         System.out.println("My CS240 Chess client " + piece);
     }
 }
+

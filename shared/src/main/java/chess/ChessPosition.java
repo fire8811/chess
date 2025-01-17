@@ -7,8 +7,12 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessPosition {
+    private final int row;
+    private final int col;
 
     public ChessPosition(int row, int col) {
+        this.row = row;
+        this.col = col;
     }
 
     /**
@@ -16,7 +20,7 @@ public class ChessPosition {
      * 1 codes for the bottom row
      */
     public int getRow() {
-        throw new RuntimeException("Not implemented");
+        return row;
     }
 
     /**
@@ -24,6 +28,33 @@ public class ChessPosition {
      * 1 codes for the left row
      */
     public int getColumn() {
-        throw new RuntimeException("Not implemented");
+        return col;
+    }
+    //TODO: implement hashcode and equals implementation
+
+    @Override public boolean equals(Object obj){
+        if (obj == null) {
+            return false;
+        }
+        else if (this == obj){ //obj and instance point to same object
+            return true;
+        }
+        else if (this.getClass() != obj.getClass()){ //obj is a different class type
+            return false;
+        }
+        else {
+            ChessPosition objAsChessPosition = (ChessPosition) obj;
+            return (objAsChessPosition.row == this.row) && (objAsChessPosition.col == this.col);
+        }
+    }
+
+    @Override public int hashCode(){
+        int hash = this.row;
+        hash = 31 * hash + this.col;
+        return hash;
+    }
+
+    @Override public String toString(){
+        return "ChessPosition {row= " + this.row + " col= " + this.col + " }";
     }
 }
