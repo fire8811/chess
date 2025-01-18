@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 /**
  * Represents a single square position on a chess board
  * <p>
@@ -30,7 +32,6 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
-    //TODO: implement hashcode and equals implementation
 
     @Override public boolean equals(Object obj){
         if (obj == null) {
@@ -48,10 +49,9 @@ public class ChessPosition {
         }
     }
 
-    @Override public int hashCode(){
-        int hash = this.row;
-        hash = 31 * hash + this.col;
-        return hash;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRow(), col);
     }
 
     @Override public String toString(){
