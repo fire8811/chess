@@ -107,23 +107,4 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
-
-
-
-    /*@Override public boolean equals(Object obj){
-        if (obj == null){
-            return false;
-        }
-        else if (this == obj){
-            return true;
-        }
-        else if (this.getClass() != obj.getClass()){
-            return false;
-        }
-        else {
-            ChessBoard objAsChessBoard = (ChessBoard) obj;
-            return Arrays.deepEquals(this.board, objAsChessBoard.board);
-        }
-    }*/
-
 }
