@@ -58,7 +58,13 @@ public class ChessPiece {
          paths. The pieceMoves method will need to take into account the type of piece, and the location of other
          pieces on the board.
          */
+        switch (pieceType){
+            case BISHOP -> {
+                var BishopMoves = new BishopMovesCalculator();
+                return BishopMoves.pieceMoves(board, myPosition);
+            }
 
+        }
 
         throw new RuntimeException("Not implemented");
     }
