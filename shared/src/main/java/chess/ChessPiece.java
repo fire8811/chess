@@ -64,9 +64,8 @@ public class ChessPiece {
                 return BishopMoves.pieceMoves(board, myPosition);
             }
 
+            default -> throw new RuntimeException("Not implemented");
         }
-
-        throw new RuntimeException("Not implemented");
     }
 
     @Override
