@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -78,6 +79,10 @@ public class ChessPiece {
             case KNIGHT -> {
                 var knightMoves = new KnightMoveCalculator(pieceColor);
                 return knightMoves.pieceMoves(board, myPosition);
+            }
+            case PAWN -> {
+                var pawnMoves = new PawnMoveCalculator(pieceColor);
+                return pawnMoves.pieceMoves(board, myPosition);
             }
 
             default -> throw new RuntimeException("Not implemented");
