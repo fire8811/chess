@@ -5,6 +5,7 @@ import java.util.Collection;
 
 public class BishopMovesCalculator implements PieceMovesCalculator{
     private ChessGame.TeamColor myTeam;
+
     public BishopMovesCalculator(ChessGame.TeamColor myTeam){
         this.myTeam = myTeam;
     }
