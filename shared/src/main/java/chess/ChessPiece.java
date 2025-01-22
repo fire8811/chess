@@ -75,6 +75,10 @@ public class ChessPiece {
                 var kingMoves = new KingMovesCalculator(pieceColor);
                 return kingMoves.pieceMoves(board, myPosition);
             }
+            case KNIGHT -> {
+                var knightMoves = new KnightMoveCalculator(pieceColor);
+                return knightMoves.pieceMoves(board, myPosition);
+            }
 
             default -> throw new RuntimeException("Not implemented");
         }
