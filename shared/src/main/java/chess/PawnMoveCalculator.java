@@ -10,6 +10,10 @@ public class PawnMoveCalculator implements PieceMovesCalculator{
         this.myTeam = myTeam;
     }
 
+    private boolean inBounds(ChessPosition position){
+        return position.getRow() <= 8 && position.getRow() >= 1 && position.getColumn() <= 8 && position.getColumn() >= 1;
+    }
+
     private Collection<ChessMove> getValidMoves(ChessPosition myPosition, ChessBoard board, Collection<ChessMove> pawnMoves){
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
@@ -20,11 +24,29 @@ public class PawnMoveCalculator implements PieceMovesCalculator{
                 pawnMoves.add(jumpTwoSquares);
             }
 
-            var potentialAdvance = new ChessPosition(row + 1, col);
+//            for (int col = myPosition.getColumn() - 1; col <= col + 1; col++){
+//
+//            }
 
-            if (board.getPiece(potentialAdvance) == null){
+            var potentialAdvance = new ChessPosition(row + 1, col);
+            var potentialCaptureLeft = new ChessPosition(row + 1, col - 1);
+            var potentialCaptureRight = new ChessPosition(row + 1, col + 1);
+
+            if (inBounds(potentialAdvance) && board.getPiece(potentialAdvance) == null){
                 var advanceOneSquare = new ChessMove(myPosition, potentialAdvance, null);
                 pawnMoves.add(advanceOneSquare);
+
+
+            }
+            if (inBounds(potentialCaptureLeft) && (board.getPiece(potentialCaptureLeft) != null) &&
+                    (board.getPiece(potentialCaptureLeft).getTeamColor() != myTeam)){
+                var captureLeft = new ChessMove(myPosition, potentialCaptureLeft, null);
+                pawnMoves.add(captureLeft);
+            }
+            if (inBounds(potentialCaptureRight) && (board.getPiece(potentialCaptureRight) != null) &&
+                    (board.getPiece(potentialCaptureRight).getTeamColor() != myTeam)){
+                var captureRight = new ChessMove(myPosition, potentialCaptureRight, null);
+                pawnMoves.add(captureRight);
             }
         }
 
