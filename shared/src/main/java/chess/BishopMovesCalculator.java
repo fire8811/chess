@@ -23,6 +23,11 @@ public class BishopMovesCalculator implements PieceMovesCalculator{
                 var chessMove = new ChessMove(myPosition, potentialPosition, null);
                 bishopMoves.add(chessMove);
             }
+            else if (board.getPiece(potentialPosition).getTeamColor() != myTeam){ //chess square contains enemy piece
+                var chessMove = new ChessMove(myPosition, potentialPosition, null);
+                bishopMoves.add(chessMove);
+                break; //no more valid moves for this direction, so exit loop
+            }
             else {
                 break;
             }
