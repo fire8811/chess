@@ -60,7 +60,7 @@ public class ChessPiece {
          */
         switch (pieceType){
             case BISHOP -> {
-                var BishopMoves = new BishopMovesCalculator();
+                var BishopMoves = new BishopMovesCalculator(pieceColor);
                 return BishopMoves.pieceMoves(board, myPosition);
             }
 
