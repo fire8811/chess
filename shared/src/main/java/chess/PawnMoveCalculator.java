@@ -10,6 +10,30 @@ public class PawnMoveCalculator implements PieceMovesCalculator{
         this.myTeam = myTeam;
     }
 
+    private boolean canPromote(ChessPosition position){
+        if ((position.getRow() == 8) && (myTeam == ChessGame.TeamColor.WHITE)){
+            return true;
+        }
+        else if ((position.getRow() == 1) && (myTeam == ChessGame.TeamColor.BLACK)) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private Collection<ChessMove> addPromotions(Collection<ChessMove> pawnMoves,
+                                                ChessPosition myPosition, ChessPosition capturePosition){
+        ChessPiece.PieceType[] promotionPieces = {ChessPiece.PieceType.BISHOP, ChessPiece.PieceType.KNIGHT,
+        ChessPiece.PieceType.ROOK, ChessPiece.PieceType.QUEEN};
+
+        for (ChessPiece.PieceType piece : promotionPieces){
+            pawnMoves.add(new ChessMove(myPosition, capturePosition, piece));
+        }
+
+        return pawnMoves;
+    }
+
     private boolean inBounds(ChessPosition position){
         return position.getRow() <= 8 && position.getRow() >= 1 && position.getColumn() <= 8 && position.getColumn() >= 1;
     }
@@ -20,41 +44,63 @@ public class PawnMoveCalculator implements PieceMovesCalculator{
 
         //first move white
         if (myTeam == ChessGame.TeamColor.WHITE) {
-            if (row == 2 && (board.getPiece(new ChessPosition(row + (2 * advanceDirection), col)) == null)) { //white first move
-                var jumpTwoSquares = new ChessMove(myPosition, new ChessPosition(row + 2, col), null);
-                pawnMoves.add(jumpTwoSquares);
+            if (row == 2 && (board.getPiece(new ChessPosition(row + (2 * advanceDirection), col)) == null)) {
+                if (board.getPiece(new ChessPosition(row + advanceDirection, col)) == null) {
+                    var jumpTwoSquares = new ChessMove(myPosition, new ChessPosition(row + 2, col), null);
+                    pawnMoves.add(jumpTwoSquares);
+                }
             }
         }
 
         //first move black
         if (myTeam == ChessGame.TeamColor.BLACK) {
-            if (row == 2 && (board.getPiece(new ChessPosition(row + (2 * advanceDirection), col)) == null)) { //white first move
-                var jumpTwoSquares = new ChessMove(myPosition, new ChessPosition(row + 2, col), null);
-                pawnMoves.add(jumpTwoSquares);
+            if (row == 7 && (board.getPiece(new ChessPosition(row + (2 * advanceDirection), col)) == null)) {
+                if (board.getPiece(new ChessPosition(row + advanceDirection, col)) == null) {
+                    var jumpTwoSquares = new ChessMove(myPosition, new ChessPosition(row - 2, col), null);
+                    pawnMoves.add(jumpTwoSquares);
+                }
             }
         }
 
+        //check for spot ahead, capture left, capture right
         var potentialAdvance = new ChessPosition(row + advanceDirection, col);
         var potentialCaptureLeft = new ChessPosition(row + advanceDirection, col - 1);
         var potentialCaptureRight = new ChessPosition(row + advanceDirection, col + 1);
 
+        //advance
         if (inBounds(potentialAdvance) && board.getPiece(potentialAdvance) == null){
-            var advanceOneSquare = new ChessMove(myPosition, potentialAdvance, null);
-            pawnMoves.add(advanceOneSquare);
-
-
+            if (canPromote(potentialAdvance)){
+                addPromotions(pawnMoves, myPosition, potentialAdvance);
+            }
+            else {
+                var advanceOneSquare = new ChessMove(myPosition, potentialAdvance, null);
+                pawnMoves.add(advanceOneSquare);
+            }
         }
+        //capture left
         if (inBounds(potentialCaptureLeft) && (board.getPiece(potentialCaptureLeft) != null) &&
                 (board.getPiece(potentialCaptureLeft).getTeamColor() != myTeam)){
-            var captureLeft = new ChessMove(myPosition, potentialCaptureLeft, null);
-            pawnMoves.add(captureLeft);
+
+            if (canPromote(potentialCaptureLeft)) {
+                addPromotions(pawnMoves, myPosition, potentialCaptureLeft);
+            }
+            else {
+                var captureLeft = new ChessMove(myPosition, potentialCaptureLeft, null);
+                pawnMoves.add(captureLeft);
+            }
+
         }
+        //capture right
         if (inBounds(potentialCaptureRight) && (board.getPiece(potentialCaptureRight) != null) &&
                 (board.getPiece(potentialCaptureRight).getTeamColor() != myTeam)){
-            var captureRight = new ChessMove(myPosition, potentialCaptureRight, null);
-            pawnMoves.add(captureRight);
+            if (canPromote(potentialCaptureRight)){
+                addPromotions(pawnMoves, myPosition, potentialCaptureRight);
+            }
+            else {
+                var captureRight = new ChessMove(myPosition, potentialCaptureRight, null);
+                pawnMoves.add(captureRight);
+            }
         }
-
 
     return pawnMoves;
     }
