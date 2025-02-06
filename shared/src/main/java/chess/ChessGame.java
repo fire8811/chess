@@ -99,6 +99,7 @@ public class ChessGame {
                 else {
                     gameBoard.addPiece(move.getEndPosition(), pieceToMove);
                 }
+                //TODO: need to see if move caused Check using seeifcheck probably
 
                 setTeamTurn(whosTurn);
             }
@@ -183,7 +184,7 @@ public class ChessGame {
         }
         return false;
     }
-
+    //TODO: some functions may have to be moved into this function for check detection
     public boolean isInCheck(TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE){
             return whiteInCheck;
