@@ -41,6 +41,15 @@ public class ChessGame {
         whosTurn = team;
     }
 
+    public void switchTeamTurn(TeamColor team){
+        if (team == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        }
+        else {
+            setTeamTurn(TeamColor.WHITE);
+        }
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -71,29 +80,30 @@ public class ChessGame {
      */
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (!squareNotEmpty(move.getStartPosition())){ //check if starting square has a piece
+        if (!squareNotEmpty(gameBoard, move.getStartPosition())){ //check if starting square has a piece
             throw new InvalidMoveException(); //if not throw exception
         }
 
         ChessPiece pieceToMove = gameBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
-        if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move) && !isInCheck(getTeamTurn())){
+        if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move)){
             gameBoard.addPiece(move.getStartPosition(), null);
 
-            if (move.getPromotionPiece() != null){
-                var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
-                gameBoard.addPiece(move.getEndPosition(), promotionPiece);
-            }
-            else {
-                gameBoard.addPiece(move.getEndPosition(), pieceToMove);
-            }
+            if (!moveWillCauseCheck(move, pieceToMove)){
+                //valid move, execute move below
+                if (move.getPromotionPiece() != null){
+                    var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
+                    gameBoard.addPiece(move.getEndPosition(), promotionPiece);
+                }
+                else {
+                    gameBoard.addPiece(move.getEndPosition(), pieceToMove);
+                }
 
-            if (getTeamTurn() == TeamColor.WHITE) {
-                setTeamTurn(TeamColor.BLACK);
+                setTeamTurn(whosTurn);
             }
-            else {
-                setTeamTurn(TeamColor.WHITE);
+            else{
+                throw new InvalidMoveException();
             }
 
         } else{
@@ -101,14 +111,26 @@ public class ChessGame {
         }
     }
 
-    public boolean squareNotEmpty(ChessPosition square){ //check if square contains a piece
-        return square != null;
+    public boolean squareNotEmpty(ChessBoard board, ChessPosition square){ //check if square contains a piece
+        return board.getPiece(square) != null;
     }
 
-    private boolean doesNotCauseCheck(ChessMove move, ChessPiece pieceToMove){
+    //execute the move on a copy of the gameboard and then verify the move does not cause check for their own team
+    //TODO: NOTE: THIS LOGIC MAY WORK FOR ALSO CHECKING CHECK AGAINST THE PIECES ENEMY TEAM NOT SURE THO YET HAVEN'T THOUGHT MUCH
+    private boolean moveWillCauseCheck(ChessMove move, ChessPiece pieceToMove){
         ChessBoard potentialBoard = gameBoard;
-        //TODO: impliment by making the potential move and then use same logic as isInCheck to see if the move causes isInCheck to change
-        return false;
+        potentialBoard.addPiece(move.getStartPosition(), null);
+
+        if (move.getPromotionPiece() != null){
+            var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
+            potentialBoard.addPiece(move.getEndPosition(), promotionPiece);
+        }
+        else {
+            potentialBoard.addPiece(move.getEndPosition(), pieceToMove);
+        }
+
+
+        return seeIfCheck(potentialBoard, pieceToMove.getTeamColor());
     }
     /**
      * Determines if the given team is in check
@@ -127,7 +149,7 @@ public class ChessGame {
 
                 if (piece != null && piece.getTeamColor() != teamColor) {  //square contains enemy piece
                     Collection<ChessMove> pieceMoves = piece.pieceMoves(board, square); //get collection of that piece's moves
-                    if (canPieceKillKing(kingPosition, pieceMoves)){
+                    if (canPieceKillKing(kingPosition, pieceMoves)){ //see if king will end up in check
                         return true;
                     }
                 }
@@ -143,7 +165,7 @@ public class ChessGame {
             for (int col = 1; col < 9; col++) {
                 var square = new ChessPosition(row, col);
 
-                if (squareNotEmpty(square)){
+                if (squareNotEmpty(board, square)){
                     ChessPiece piece = board.getPiece(square);
                     if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == myTeam)
                         return square; //return position of myTeam's king
@@ -164,7 +186,6 @@ public class ChessGame {
 
     public boolean isInCheck(TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE){
-
             return whiteInCheck;
         }
         else {
