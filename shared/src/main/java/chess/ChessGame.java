@@ -126,6 +126,7 @@ public class ChessGame {
         ChessBoard potentialBoard = gameBoard;
         potentialBoard.addPiece(move.getStartPosition(), null);
 
+        //make potential move regardless of rules and then verify whether or not check has been made
         if (move.getPromotionPiece() != null){
             var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
             potentialBoard.addPiece(move.getEndPosition(), promotionPiece);
@@ -182,7 +183,7 @@ public class ChessGame {
 
     public boolean canPieceKillKing(ChessPosition kingPosition, Collection<ChessMove> enemyMoves){
         for (ChessMove move: enemyMoves){
-            if(move.getEndPosition() == kingPosition){
+            if(move.getEndPosition().equals(kingPosition)){
                 return true;
             }
         }
