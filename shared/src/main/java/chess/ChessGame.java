@@ -87,6 +87,10 @@ public class ChessGame {
         ChessPiece pieceToMove = gameBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
+        if (pieceToMove.getTeamColor() != whosTurn){
+            throw new InvalidMoveException(); //attempted move when it's the other team's turn
+        }
+
         if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move)){
             gameBoard.addPiece(move.getStartPosition(), null);
 
@@ -101,7 +105,7 @@ public class ChessGame {
                 }
                 //TODO: need to see if move caused Check using seeifcheck probably
 
-                setTeamTurn(whosTurn);
+                switchTeamTurn(whosTurn);
             }
             else{
                 throw new InvalidMoveException();
