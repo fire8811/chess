@@ -11,6 +11,7 @@ import java.util.Collection;
 public class ChessGame {
     private TeamColor whosTurn;
     private ChessBoard gameBoard;
+
     private boolean whiteInCheck = false;
     private boolean blackInCheck = false;
     private boolean whiteInCheckmate = false;
@@ -62,10 +63,6 @@ public class ChessGame {
         return moves;
     }
 
-    public boolean checkIfCheck(){
-        return false;
-    }
-
     /**
      * Makes a move in a chess game
      *
@@ -74,13 +71,23 @@ public class ChessGame {
      */
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (!squareNotEmpty(move.getStartPosition())){ //check if starting square has a piece
+            throw new InvalidMoveException(); //if not throw exception
+        }
 
         ChessPiece pieceToMove = gameBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
 
-        if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move)){
+        if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move) && !isInCheck(getTeamTurn())){
             gameBoard.addPiece(move.getStartPosition(), null);
-            gameBoard.addPiece(move.getEndPosition(), pieceToMove);
+
+            if (move.getPromotionPiece() != null){
+                var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
+                gameBoard.addPiece(move.getEndPosition(), promotionPiece);
+            }
+            else {
+                gameBoard.addPiece(move.getEndPosition(), pieceToMove);
+            }
 
             if (getTeamTurn() == TeamColor.WHITE) {
                 setTeamTurn(TeamColor.BLACK);
@@ -94,14 +101,71 @@ public class ChessGame {
         }
     }
 
+    public boolean squareNotEmpty(ChessPosition square){ //check if square contains a piece
+        if (gameBoard.getPiece(square) != null) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean doesNotCauseCheck(ChessMove move, ChessPiece pieceToMove){
+        ChessBoard potentialBoard = gameBoard;
+        //TODO: impliment by making the potential move and then use same logic as isInCheck to see if the move causes isInCheck to change
+        return false;
+    }
     /**
      * Determines if the given team is in check
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
+
+    public boolean seeIfCheck(ChessBoard board, TeamColor teamColor){
+        ChessPosition kingPosition = getKingPosition(board, teamColor); //get position of king
+
+        for(int row = 1; row < 9; row++){ //iterate through all enemy pieces' moves and see if they can kill the king
+            for(int col = 1; col < 9; col++){
+                ChessPosition square = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(square);
+
+                if (piece != null && piece.getTeamColor() != teamColor) {  //square contains enemy piece
+                    Collection<ChessMove> pieceMoves = piece.pieceMoves(board, square); //get collection of that piece's moves
+
+                }
+
+            }
+        }
+        return false;
+    }
+
+    //finds the position of the given team's king
+    private ChessPosition getKingPosition(ChessBoard board, TeamColor myTeam) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
+                var square = new ChessPosition(row, col);
+
+                if (squareNotEmpty(square)){
+                    ChessPiece piece = board.getPiece(square);
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == myTeam)
+                        return square; //return position of myTeam's king
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean canKillKing(ChessPosition kingPosition, Collection<ChessMove> enemyMoves){
+        for (ChessMove move: enemyMoves){
+            if(move.getEndPosition() == kingPosition){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isInCheck(TeamColor teamColor) {
         if (teamColor == TeamColor.WHITE){
+
             return whiteInCheck;
         }
         else {
