@@ -102,10 +102,7 @@ public class ChessGame {
     }
 
     public boolean squareNotEmpty(ChessPosition square){ //check if square contains a piece
-        if (gameBoard.getPiece(square) != null) {
-            return true;
-        }
-        return false;
+        return square != null;
     }
 
     private boolean doesNotCauseCheck(ChessMove move, ChessPiece pieceToMove){
@@ -130,7 +127,9 @@ public class ChessGame {
 
                 if (piece != null && piece.getTeamColor() != teamColor) {  //square contains enemy piece
                     Collection<ChessMove> pieceMoves = piece.pieceMoves(board, square); //get collection of that piece's moves
-
+                    if (canPieceKillKing(kingPosition, pieceMoves)){
+                        return true;
+                    }
                 }
 
             }
@@ -154,7 +153,7 @@ public class ChessGame {
         return null;
     }
 
-    public boolean canKillKing(ChessPosition kingPosition, Collection<ChessMove> enemyMoves){
+    public boolean canPieceKillKing(ChessPosition kingPosition, Collection<ChessMove> enemyMoves){
         for (ChessMove move: enemyMoves){
             if(move.getEndPosition() == kingPosition){
                 return true;
