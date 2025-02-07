@@ -11,11 +11,26 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
         
     }
 
+    //copy constructor
+    public ChessBoard(ChessBoard oldBoard){
+        this.board = new ChessPiece[8][8];
+
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; j < 8; j++){
+                if (oldBoard.board[i][j] != null){
+                    this.board[i][j] = new ChessPiece(oldBoard.board[i][j]);
+                }
+                else {
+                    this.board[i][j] = null;
+                }
+            }
+        }
+    }
     /**
      * Adds a chess piece to the chessboard
      *

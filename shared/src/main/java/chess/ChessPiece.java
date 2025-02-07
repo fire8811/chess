@@ -19,6 +19,11 @@ public class ChessPiece {
         this.pieceType = type;
     }
 
+    public ChessPiece(ChessPiece oldPiece){
+        this.pieceColor = oldPiece.pieceColor;
+        this.pieceType = oldPiece.pieceType;
+    }
+
     /**
      * The various different chess piece options
      */

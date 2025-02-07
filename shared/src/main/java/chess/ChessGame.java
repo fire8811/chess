@@ -1,7 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
-
+import java.util.Iterator;
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
@@ -68,7 +69,15 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece pieceToMove = gameBoard.getPiece(startPosition);
         Collection<ChessMove> moves = pieceToMove.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> copyOfMoves = new ArrayList<>(moves);
 
+        for (ChessMove move : copyOfMoves){
+            if (moveWillCauseCheck(move, pieceToMove)){
+                moves.remove(move);
+            }
+        }
+
+        //moves.removeIf(move -> moveWillCauseCheck(move, pieceToMove));
         return moves;
     }
 
@@ -91,10 +100,9 @@ public class ChessGame {
             throw new InvalidMoveException(); //attempted move when it's the other team's turn
         }
 
-        if(getTeamTurn() == pieceToMove.getTeamColor() && validMoves.contains(move)){
-            gameBoard.addPiece(move.getStartPosition(), null);
-
+        if(validMoves.contains(move)){
             if (!moveWillCauseCheck(move, pieceToMove)){
+                gameBoard.addPiece(move.getStartPosition(), null);
                 //valid move, execute move below
                 if (move.getPromotionPiece() != null){
                     var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
@@ -123,7 +131,7 @@ public class ChessGame {
     //execute the move on a copy of the gameboard and then verify the move does not cause check for their own team
     //TODO: NOTE: THIS LOGIC MAY WORK FOR ALSO CHECKING CHECK AGAINST THE PIECES ENEMY TEAM NOT SURE THO YET HAVEN'T THOUGHT MUCH
     private boolean moveWillCauseCheck(ChessMove move, ChessPiece pieceToMove){
-        ChessBoard potentialBoard = gameBoard;
+        ChessBoard potentialBoard = new ChessBoard(gameBoard);
         potentialBoard.addPiece(move.getStartPosition(), null);
 
         //make potential move regardless of rules and then verify whether or not check has been made
