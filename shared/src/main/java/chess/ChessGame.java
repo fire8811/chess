@@ -101,23 +101,18 @@ public class ChessGame {
         }
 
         if(validMoves.contains(move)){
-            if (!moveWillCauseCheck(move, pieceToMove)){
-                gameBoard.addPiece(move.getStartPosition(), null);
-                //valid move, execute move below
-                if (move.getPromotionPiece() != null){
-                    var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
-                    gameBoard.addPiece(move.getEndPosition(), promotionPiece);
-                }
-                else {
-                    gameBoard.addPiece(move.getEndPosition(), pieceToMove);
-                }
-                //TODO: need to see if move caused Check using seeifcheck probably
+            gameBoard.addPiece(move.getStartPosition(), null);
+            //valid move, execute move below
+            if (move.getPromotionPiece() != null){
+                var promotionPiece = new ChessPiece(getTeamTurn(), move.getPromotionPiece());
+                gameBoard.addPiece(move.getEndPosition(), promotionPiece);
+            }
+            else {
+                gameBoard.addPiece(move.getEndPosition(), pieceToMove);
+            }
+            //TODO: need to see if move caused Check using seeifcheck probably
 
-                switchTeamTurn(whosTurn);
-            }
-            else{
-                throw new InvalidMoveException();
-            }
+            switchTeamTurn(whosTurn);
 
         } else{
             throw new InvalidMoveException();
