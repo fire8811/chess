@@ -51,6 +51,15 @@ public class ChessGame {
         }
     }
 
+    private TeamColor getOppositeTeam(TeamColor team){
+        if (team == TeamColor.WHITE) {
+            return TeamColor.BLACK;
+    }
+        else {
+            return TeamColor.WHITE;
+        }
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -110,7 +119,10 @@ public class ChessGame {
             else {
                 gameBoard.addPiece(move.getEndPosition(), pieceToMove);
             }
+            isInCheck(getOppositeTeam(whosTurn));
             //TODO: need to see if move caused Check using seeifcheck probably
+            //TODO: check if CheckMate
+            //TODO: check if StaleMate
 
             switchTeamTurn(whosTurn);
 
@@ -192,14 +204,34 @@ public class ChessGame {
         }
         return false;
     }
-    //TODO: some functions may have to be moved into this function for check detection
+
+    /**
+     * Determines if the given team is in check
+     *
+     * @param teamColor which team to check for check
+     * @return True if the specified team is in check
+     */
+
     public boolean isInCheck(TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE){
-            return whiteInCheck;
+        if (seeIfCheck(gameBoard, teamColor)){
+            if(teamColor == TeamColor.WHITE){
+                whiteInCheck = true;
+                return true;
+            }
+            else {
+                blackInCheck = true;
+                return true;
+            }
         }
         else {
-            return blackInCheck;
+            if(teamColor == TeamColor.WHITE){
+                whiteInCheck = false;
+            }
+            else {
+                blackInCheck = false;
+            }
         }
+        return false;
     }
 
     /**
