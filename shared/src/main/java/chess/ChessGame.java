@@ -86,7 +86,6 @@ public class ChessGame {
             }
         }
 
-        //moves.removeIf(move -> moveWillCauseCheck(move, pieceToMove));
         return moves;
     }
 
@@ -120,8 +119,7 @@ public class ChessGame {
                 gameBoard.addPiece(move.getEndPosition(), pieceToMove);
             }
             isInCheck(getOppositeTeam(whosTurn));
-            //TODO: need to see if move caused Check using seeifcheck probably
-            //TODO: check if CheckMate
+            isInCheckmate(getOppositeTeam(whosTurn));
             //TODO: check if StaleMate
 
             switchTeamTurn(whosTurn);
@@ -136,7 +134,6 @@ public class ChessGame {
     }
 
     //execute the move on a copy of the gameboard and then verify the move does not cause check for their own team
-    //TODO: NOTE: THIS LOGIC MAY WORK FOR ALSO CHECKING CHECK AGAINST THE PIECES ENEMY TEAM NOT SURE THO YET HAVEN'T THOUGHT MUCH
     private boolean moveWillCauseCheck(ChessMove move, ChessPiece pieceToMove){
         ChessBoard potentialBoard = new ChessBoard(gameBoard);
         potentialBoard.addPiece(move.getStartPosition(), null);
@@ -150,9 +147,9 @@ public class ChessGame {
             potentialBoard.addPiece(move.getEndPosition(), pieceToMove);
         }
 
-
         return seeIfCheck(potentialBoard, pieceToMove.getTeamColor());
     }
+
     /**
      * Determines if the given team is in check
      *
@@ -241,12 +238,19 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE){
-            return whiteInCheckmate;
+        for(int i=1; i<9; i++){
+            for(int j=1; j<9; j++){
+                ChessPosition square = new ChessPosition(i, j);
+                if (squareNotEmpty(getBoard(), square) && getBoard().getPiece(square).getTeamColor() == teamColor){ //square contains friendly piece
+                    Collection<ChessMove> validMoves = validMoves(square);
+                    if (validMoves.size() > 0){
+                        return false;
+                    }
+
+                }
+            }
         }
-        else {
-            return blackInCheckmate;
-        }
+        return true;
     }
 
     /**
