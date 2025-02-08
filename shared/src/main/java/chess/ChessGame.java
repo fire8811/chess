@@ -13,13 +13,6 @@ public class ChessGame {
     private TeamColor whosTurn;
     private ChessBoard gameBoard;
 
-    private boolean whiteInCheck = false;
-    private boolean blackInCheck = false;
-    private boolean whiteInCheckmate = false;
-    private boolean blackInCheckmate = false;
-    private boolean whiteInStalemate = false;
-    private boolean blackInStalemate = false;
-
     public ChessGame() {
         this.whosTurn = TeamColor.WHITE;
         gameBoard = new ChessBoard();
@@ -212,22 +205,8 @@ public class ChessGame {
 
     public boolean isInCheck(TeamColor teamColor) {
         if (seeIfCheck(gameBoard, teamColor)){
-            if(teamColor == TeamColor.WHITE){
-                whiteInCheck = true;
-                return true;
-            }
-            else {
-                blackInCheck = true;
-                return true;
-            }
-        }
-        else {
-            if(teamColor == TeamColor.WHITE){
-                whiteInCheck = false;
-            }
-            else {
-                blackInCheck = false;
-            }
+            return true;
+
         }
         return false;
     }
@@ -285,14 +264,6 @@ public class ChessGame {
                 }
             }
         }
-
-//        ChessPosition kingPosition = getKingPosition(getBoard(), teamColor);
-//        Collection<ChessMove> kingMoves = validMoves(kingPosition);
-//
-//        if (kingMoves.size() == 0 && !isInCheckmate(teamColor)){ //king has no legal moves but is not in checkmate therefore stalemate
-//            return true;
-//        }
-
         return true;
     }
 
