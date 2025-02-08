@@ -66,8 +66,8 @@ public class ChessPiece {
          */
         switch (pieceType){
             case BISHOP -> {
-                var BishopMoves = new BishopMovesCalculator(pieceColor);
-                return BishopMoves.pieceMoves(board, myPosition);
+                var bishopMoves = new BishopMovesCalculator(pieceColor);
+                return bishopMoves.pieceMoves(board, myPosition);
             }
             case ROOK -> {
                 var rookMoves = new RookMovesCalculator(pieceColor);
