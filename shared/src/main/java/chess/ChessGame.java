@@ -120,7 +120,8 @@ public class ChessGame {
             }
             isInCheck(getOppositeTeam(whosTurn));
             isInCheckmate(getOppositeTeam(whosTurn));
-            //TODO: check if StaleMate
+            isInStalemate(getOppositeTeam(whosTurn));
+
 
             switchTeamTurn(whosTurn);
 
@@ -238,11 +239,16 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        if (!isInCheck(teamColor)){
+            return false;
+        }
+
         for(int i=1; i<9; i++){
             for(int j=1; j<9; j++){
                 ChessPosition square = new ChessPosition(i, j);
                 if (squareNotEmpty(getBoard(), square) && getBoard().getPiece(square).getTeamColor() == teamColor){ //square contains friendly piece
                     Collection<ChessMove> validMoves = validMoves(square);
+                    //if validMoves.size() > 0 that means there is a move that will remove check, meaning it is not checkmate
                     if (validMoves.size() > 0){
                         return false;
                     }
@@ -261,12 +267,33 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (teamColor == TeamColor.WHITE){
-            return whiteInStalemate;
+        if (isInCheck(teamColor)){ //edge case handling
+            return false;
         }
-        else {
-            return blackInStalemate;
+
+        for(int i=1; i<9; i++) { //look at every friendly piece's moves
+            for (int j = 1; j < 9; j++) {
+
+                ChessPosition square = new ChessPosition(i, j);
+
+                if (squareNotEmpty(getBoard(), square) && getBoard().getPiece(square).getTeamColor() == teamColor) { //square contains friendly piece
+                    Collection<ChessMove> validMoves = validMoves(square);
+                    //if validMoves.size() > 0 that means there is a legal move so not stalemate
+                    if (validMoves.size() > 0) {
+                        return false;
+                    }
+                }
+            }
         }
+
+//        ChessPosition kingPosition = getKingPosition(getBoard(), teamColor);
+//        Collection<ChessMove> kingMoves = validMoves(kingPosition);
+//
+//        if (kingMoves.size() == 0 && !isInCheckmate(teamColor)){ //king has no legal moves but is not in checkmate therefore stalemate
+//            return true;
+//        }
+
+        return true;
     }
 
     /**
