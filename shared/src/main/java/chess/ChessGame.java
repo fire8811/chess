@@ -179,8 +179,10 @@ public class ChessGame {
 
                 if (squareNotEmpty(board, square)){
                     ChessPiece piece = board.getPiece(square);
-                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == myTeam)
+
+                    if (piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == myTeam){
                         return square; //return position of myTeam's king
+                    }
                 }
             }
         }
