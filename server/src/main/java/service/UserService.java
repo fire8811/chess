@@ -24,7 +24,8 @@ public class UserService {
         }
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws UsernameTakenException {
+    public RegisterResult register(RegisterRequest registerRequest) throws UsernameTakenException, BadRequestException {
+        checkIfValidRegisterRequest(registerRequest);
 
         String username = registerRequest.username();
 
