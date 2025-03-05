@@ -10,7 +10,7 @@ public class MemoryUserDAO implements UserDAO{
 
     final private HashMap<String, UserData> usersMemory = new HashMap<>();
 
-    public HashMap<String, UserData> getUsersMemory(){ //getter for testing
+    public HashMap<String, UserData> getUsers(){ //getter for testing
         return usersMemory;
     }
 

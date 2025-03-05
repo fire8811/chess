@@ -8,7 +8,7 @@ public class MemoryAuthDAO implements AuthDAO {
     //final private ArrayList<AuthData> authDataMemory = new ArrayList<>();
     final private HashMap<String, String> authDataMemory = new HashMap<>(); //k: username v: authToken
 
-    public HashMap<String, String> getAuthDataMemory() { //getter used for controlled testing
+    public HashMap<String, String> getAuths() { //getter used for controlled testing
         return authDataMemory;
     }
 
