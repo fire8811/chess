@@ -9,6 +9,10 @@ public class MemoryGameDAO implements GameDAO{
     //like this: HashMap<Integer, List> (gameID: [rest of attributes in list here)
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
+    public HashMap<Integer, GameData> getGames(){ //getter for testing
+        return games;
+    }
+
     public void clearGames(){
         games.clear();
     }
