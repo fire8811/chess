@@ -14,20 +14,20 @@ public class MemoryUserDAO implements UserDAO{
         return usersMemory;
     }
 
-    public boolean isUsernameFree(String username) throws DataAccessException{
+    public boolean isUsernameFree(String username) throws UsernameTakenException{
         if (usersMemory.containsKey(username) == false){
             return true;
         }
         else {
-            throw new DataAccessException("username already taken!");
+            throw new UsernameTakenException("username already taken!");
         }
     }
 
-    public boolean findUser(String username) throws DataAccessException{
+    public boolean findUser(String username) {
         return(usersMemory.containsKey(username));
     }
 
-    public void addUser(UserData userData) throws DataAccessException{
+    public void addUser(UserData userData) {
         usersMemory.put(userData.username(), userData);
 
     }

@@ -1,8 +1,5 @@
 package service;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
-import dataaccess.AuthDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.RegisterRequest;
 import model.RegisterResult;
@@ -21,7 +18,14 @@ public class UserService {
         this.users = users;
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException {
+    public void checkIfValidRegisterRequest(RegisterRequest request) throws BadRequestException{
+        if (request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()){
+            throw new BadRequestException("bad request");
+        }
+    }
+
+    public RegisterResult register(RegisterRequest registerRequest) throws UsernameTakenException {
+
         String username = registerRequest.username();
 
         if(users.isUsernameFree(username)){
@@ -32,8 +36,11 @@ public class UserService {
 
             return new RegisterResult(username, authData.authToken());
         }
+        else {
+            throw new UsernameTakenException("already taken");
+        }
 
-        throw new DataAccessException("Username taken!");
+
     }
 
     private static String generateToken(){
