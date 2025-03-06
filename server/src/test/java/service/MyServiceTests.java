@@ -2,10 +2,7 @@ package service;
 
 import dataaccess.*;
 
-import model.LoginRequest;
-import model.LoginResult;
-import model.RegisterRequest;
-import model.UserData;
+import model.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +57,21 @@ public class MyServiceTests {
         registerValidUser();
         assertThrows(UnauthorizedException.class, () ->
                 userService.login(new LoginRequest("jonbob", "wii")));
+    }
+
+    @Test
+    void testLogoutValid() throws UnauthorizedException, BadRequestException, UsernameTakenException {
+        registerValidUser();
+        String authToken = authDAO.getAuths().get(0).authToken();
+
+        userService.logout(new LogoutRequest(authToken));
+        assertEquals(0, authDAO.getAuths().size());
+    }
+
+    @Test
+    void testLogoutInvalid() throws UnauthorizedException{
+        assertThrows(UnauthorizedException.class, () ->
+                userService.logout(new LogoutRequest("")));
     }
 
 
