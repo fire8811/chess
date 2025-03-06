@@ -224,6 +224,10 @@ public class ChessGame {
             return false;
         }
 
+        return iterateOverSquares(teamColor);
+    }
+
+    public boolean iterateOverSquares(TeamColor teamColor){
         for(int i=1; i<9; i++){
             for(int j=1; j<9; j++){
                 ChessPosition square = new ChessPosition(i, j);
@@ -252,21 +256,7 @@ public class ChessGame {
             return false;
         }
 
-        for(int i=1; i<9; i++) { //look at every friendly piece's moves
-            for (int j = 1; j < 9; j++) {
-
-                ChessPosition square = new ChessPosition(i, j);
-
-                if (squareNotEmpty(getBoard(), square) && getBoard().getPiece(square).getTeamColor() == teamColor) { //square contains friendly piece
-                    Collection<ChessMove> validMoves = validMoves(square);
-                    //if validMoves.size() > 0 that means there is a legal move so not stalemate
-                    if (validMoves.size() > 0) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
+        return iterateOverSquares(teamColor);
     }
 
     /**

@@ -9,54 +9,53 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 public class MyServiceTests {
-    static final UserDAO userDAO = new MemoryUserDAO();
-    static final GameDAO gameDAO = new MemoryGameDAO();
-    static final AuthDAO authDAO = new MemoryAuthDAO();
+    static final UserDAO UserDOA = new MemoryUserDAO();
+    static final GameDAO GameDAO = new MemoryGameDAO();
+    static final AuthDAO AuthDAO = new MemoryAuthDAO();
 
-    static final ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
-    UserService userService = new UserService(authDAO, userDAO, gameDAO);
-    static final GameService gameService = new GameService(authDAO, gameDAO);
+    static final ClearService ClearService = new ClearService(AuthDAO, UserDOA, GameDAO);
+    UserService UserService = new UserService(AuthDAO, UserDOA, GameDAO);
+    static final GameService GameService = new GameService(AuthDAO, GameDAO);
 
     void registerValidUser() throws BadRequestException, UsernameTakenException{
         var registerRequest = new RegisterRequest("jonbob", "oogabooga", "email@email.com");
-        userService.register(registerRequest);
+        UserService.register(registerRequest);
     }
 
     @BeforeEach
     void configureTest(){
-        clearService.clear();
+        ClearService.clear();
     }
 
     @Test
     void testRegister() throws BadRequestException, UsernameTakenException {
         registerValidUser();
 
-        assertEquals(1, userDAO.getUsers().size());
-        assertTrue(userDAO.getUsers().containsKey("jonbob"));
+        assertEquals(1, UserDOA.getUsers().size());
+        assertTrue(UserDOA.getUsers().containsKey("jonbob"));
     }
 
     @Test
     void testRegisterNegative() {
         assertThrows(BadRequestException.class, () ->
-        userService.register(new RegisterRequest("jonbob", "oogabooga", null)));
+        UserService.register(new RegisterRequest("jonbob", "oogabooga", null)));
     }
 
     @Test
-    void test_clear() throws BadRequestException, UsernameTakenException{
+    void testClear() throws BadRequestException, UsernameTakenException{
         registerValidUser();
 
-        clearService.clear();
-        assertEquals(0, userDAO.getUsers().size());
-        assertEquals(0, authDAO.getAuths().size());
-        assertEquals(0, gameDAO.getGamesFromMemory().size());
+        ClearService.clear();
+        assertEquals(0, UserDOA.getUsers().size());
+        assertEquals(0, AuthDAO.getAuths().size());
+        assertEquals(0, GameDAO.getGamesFromMemory().size());
     }
 
     @Test
     void testLoginValid() throws UnauthorizedException{
-        userDAO.addUser(new UserData("jonbob", "oui", "email@email.com"));
-        LoginResult result = userService.login(new LoginRequest("jonbob", "oui"));
+        UserDOA.addUser(new UserData("jonbob", "oui", "email@email.com"));
+        LoginResult result = UserService.login(new LoginRequest("jonbob", "oui"));
         assertEquals("jonbob", result.username());
     }
 
@@ -64,47 +63,47 @@ public class MyServiceTests {
     void testLoginInvalid() throws UnauthorizedException, BadRequestException, UsernameTakenException {
         registerValidUser();
         assertThrows(UnauthorizedException.class, () ->
-                userService.login(new LoginRequest("jonbob", "wii")));
+                UserService.login(new LoginRequest("jonbob", "wii")));
     }
 
     @Test
     void testLogoutValid() throws UnauthorizedException, BadRequestException, UsernameTakenException {
         registerValidUser();
-        String authToken = authDAO.getAuths().get(0).authToken();
+        String authToken = AuthDAO.getAuths().get(0).authToken();
 
-        userService.logout(new LogoutRequest(authToken));
-        assertEquals(0, authDAO.getAuths().size());
+        UserService.logout(new LogoutRequest(authToken));
+        assertEquals(0, AuthDAO.getAuths().size());
     }
 
     @Test
     void testLogoutInvalid() throws UnauthorizedException{
         assertThrows(UnauthorizedException.class, () ->
-                userService.logout(new LogoutRequest("")));
+                UserService.logout(new LogoutRequest("")));
     }
 
     @Test
     void testCreateGame() throws UnauthorizedException, BadRequestException, UsernameTakenException{
         registerValidUser();
-        String authToken = authDAO.getAuths().get(0).authToken();
+        String authToken = AuthDAO.getAuths().get(0).authToken();
 
-        gameService.createGame(new CreateRequest(authToken, "banana"));
+        GameService.createGame(new CreateRequest(authToken, "banana"));
 
-        assertEquals(1, gameDAO.getGamesFromMemory().size());
+        assertEquals(1, GameDAO.getGamesFromMemory().size());
     }
 
     @Test
     void testCreateGameException() throws UnauthorizedException { //create game without an authToken
         assertThrows(UnauthorizedException.class, () ->
-                gameService.createGame(new CreateRequest("", "banana")));
+                GameService.createGame(new CreateRequest("", "banana")));
     }
 
     @Test
     void testListGames() throws UnauthorizedException, BadRequestException, UsernameTakenException {
         registerValidUser();
-        String authToken = authDAO.getAuths().get(0).authToken();
-        gameService.createGame(new CreateRequest(authToken, "banana"));
+        String authToken = AuthDAO.getAuths().get(0).authToken();
+        GameService.createGame(new CreateRequest(authToken, "banana"));
 
-        ListResult listResult = new ListResult(gameDAO.getGamesFromMemory());
+        ListResult listResult = new ListResult(GameDAO.getGamesFromMemory());
         GameData actualGame = listResult.games().iterator().next();
 
         assertEquals(2, actualGame.gameID());
@@ -116,24 +115,24 @@ public class MyServiceTests {
     @Test
     void testListGamesException() throws UnauthorizedException, BadRequestException, UsernameTakenException {
         assertThrows(UnauthorizedException.class, () ->
-                gameService.listGames(new ListRequest("")));
+                GameService.listGames(new ListRequest("")));
     }
 
     @Test
     void testJoinGame() throws UnauthorizedException, BadRequestException, UsernameTakenException, AlreadyTakenException {
         registerValidUser();
-        String authToken = authDAO.getAuths().get(0).authToken();
-        gameService.createGame(new CreateRequest(authToken, "banana"));
-        gameDAO.updateGame(1, ChessGame.TeamColor.WHITE, "jonbob");
+        String authToken = AuthDAO.getAuths().get(0).authToken();
+        GameService.createGame(new CreateRequest(authToken, "banana"));
+        GameDAO.updateGame(1, ChessGame.TeamColor.WHITE, "jonbob");
 
-        assertEquals("jonbob", gameDAO.getGame(1).whiteUsername());
-        assertEquals(1, gameDAO.getGame(1).gameID());
+        assertEquals("jonbob", GameDAO.getGame(1).whiteUsername());
+        assertEquals(1, GameDAO.getGame(1).gameID());
     }
 
     @Test
     void testJoinGameFail(){
         assertThrows(UnauthorizedException.class, () ->
-                gameService.joinGame(new JoinRequest("", ChessGame.TeamColor.BLACK, 1)));
+                GameService.joinGame(new JoinRequest("", ChessGame.TeamColor.BLACK, 1)));
     }
 
 
