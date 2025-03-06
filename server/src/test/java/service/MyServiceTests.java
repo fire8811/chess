@@ -2,7 +2,10 @@ package service;
 
 import dataaccess.*;
 
+import model.LoginRequest;
+import model.LoginResult;
 import model.RegisterRequest;
+import model.UserData;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,25 +19,28 @@ public class MyServiceTests {
     static final ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
     UserService userService = new UserService(authDAO, userDAO, gameDAO);
 
-    @Test
-    void testRegister() throws BadRequestException, UsernameTakenException {
+    void registerValidUser() throws BadRequestException, UsernameTakenException{
         var registerRequest = new RegisterRequest("jonbob", "oogabooga", "email@email.com");
         userService.register(registerRequest);
+    }
+
+    @Test
+    void testRegister() throws BadRequestException, UsernameTakenException {
+        registerValidUser();
 
         assertEquals(1, userDAO.getUsers().size());
         assertTrue(userDAO.getUsers().containsKey("jonbob"));
     }
 
     @Test
-    void testRegisterNegative() throws BadRequestException, UsernameTakenException {
+    void testRegisterNegative() {
         assertThrows(BadRequestException.class, () ->
         userService.register(new RegisterRequest("jonbob", "oogabooga", "")));
     }
 
     @Test
     void test_clear() throws BadRequestException, UsernameTakenException{
-        var registerRequest = new RegisterRequest("jonbob", "oogabooga", "email@email.com");
-        userService.register(registerRequest);
+        registerValidUser();
 
         clearService.clear();
         assertEquals(0, userDAO.getUsers().size());
@@ -44,6 +50,16 @@ public class MyServiceTests {
 
     @Test
     void testLoginValid() throws UnauthorizedException{
-        
+        userDAO.addUser(new UserData("jonbob", "oui", "email@email.com"));
+        LoginResult result = userService.login(new LoginRequest("jonbob", "oui"));
+        assertEquals("jonbob", result.username());
+    }
+
+    @Test
+    void testLoginInvalid() throws UnauthorizedException, BadRequestException, UsernameTakenException {
+        registerValidUser();
+        assertThrows(UnauthorizedException.class, () ->
+                userService.login(new LoginRequest("jonbob", "wii")));
+
     }
 }
