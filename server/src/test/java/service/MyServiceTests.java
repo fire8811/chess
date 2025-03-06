@@ -15,6 +15,7 @@ public class MyServiceTests {
 
     static final ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
     UserService userService = new UserService(authDAO, userDAO, gameDAO);
+    static final GameService gameService = new GameService(authDAO, gameDAO);
 
     void registerValidUser() throws BadRequestException, UsernameTakenException{
         var registerRequest = new RegisterRequest("jonbob", "oogabooga", "email@email.com");
@@ -74,5 +75,19 @@ public class MyServiceTests {
                 userService.logout(new LogoutRequest("")));
     }
 
+    @Test
+    void testCreateGame() throws UnauthorizedException, BadRequestException, UsernameTakenException{
+        registerValidUser();
+        String authToken = authDAO.getAuths().get(0).authToken();
 
+        gameService.createGame(new CreateRequest(authToken, "banana"));
+
+        assertEquals(1, gameDAO.getGamesFromMemory().size());
+    }
+
+    @Test
+    void testCreateGameException() throws UnauthorizedException { //create game without an authToken
+        assertThrows(UnauthorizedException.class, () ->
+                gameService.createGame(new CreateRequest("", "banana")));
+    }
 }
