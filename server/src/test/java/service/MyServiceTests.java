@@ -103,7 +103,7 @@ public class MyServiceTests {
 
         assertEquals(1, actualGame.gameID());
         assertEquals(null, actualGame.whiteUsername());
-        assertEquals(null, actualGame.blackUserName());
+        assertEquals(null, actualGame.blackUsername());
         assertEquals("banana", actualGame.gameName());
     }
 

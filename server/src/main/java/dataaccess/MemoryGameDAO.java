@@ -32,7 +32,7 @@ public class MemoryGameDAO implements GameDAO{
         if (game.whiteUsername() == null && color == ChessGame.TeamColor.WHITE){
             return true;
         }
-        else if (game.blackUserName() == null && color == ChessGame.TeamColor.BLACK){
+        else if (game.blackUsername() == null && color == ChessGame.TeamColor.BLACK){
             return true;
         }
         return false;
@@ -52,7 +52,7 @@ public class MemoryGameDAO implements GameDAO{
                     game.game()));
         }
         else if (color == ChessGame.TeamColor.WHITE){
-            games.put(gameID, new GameData(gameID, username, game.blackUserName(), game.gameName(),
+            games.put(gameID, new GameData(gameID, username, game.blackUsername(), game.gameName(),
                     game.game()));
         }
         else {
