@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.*;
 
 import model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,11 @@ public class MyServiceTests {
     void registerValidUser() throws BadRequestException, UsernameTakenException{
         var registerRequest = new RegisterRequest("jonbob", "oogabooga", "email@email.com");
         userService.register(registerRequest);
+    }
+
+    @BeforeEach
+    void configureTest(){
+        clearService.clear();
     }
 
     @Test
@@ -101,7 +107,7 @@ public class MyServiceTests {
         ListResult listResult = new ListResult(gameDAO.getGamesFromMemory());
         GameData actualGame = listResult.games().iterator().next();
 
-        assertEquals(1, actualGame.gameID());
+        assertEquals(2, actualGame.gameID());
         assertEquals(null, actualGame.whiteUsername());
         assertEquals(null, actualGame.blackUsername());
         assertEquals("banana", actualGame.gameName());
@@ -112,4 +118,23 @@ public class MyServiceTests {
         assertThrows(UnauthorizedException.class, () ->
                 gameService.listGames(new ListRequest("")));
     }
+
+    @Test
+    void testJoinGame() throws UnauthorizedException, BadRequestException, UsernameTakenException, AlreadyTakenException {
+        registerValidUser();
+        String authToken = authDAO.getAuths().get(0).authToken();
+        gameService.createGame(new CreateRequest(authToken, "banana"));
+        gameDAO.updateGame(1, ChessGame.TeamColor.WHITE, "jonbob");
+
+        assertEquals("jonbob", gameDAO.getGame(1).whiteUsername());
+        assertEquals(1, gameDAO.getGame(1).gameID());
+    }
+
+    @Test
+    void testJoinGameFail(){
+        assertThrows(UnauthorizedException.class, () ->
+                gameService.joinGame(new JoinRequest("", ChessGame.TeamColor.BLACK, 1)));
+    }
+
+
 }
