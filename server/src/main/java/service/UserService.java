@@ -53,4 +53,10 @@ public class UserService {
     private static String generateToken(){
         return UUID.randomUUID().toString();
     }
+
+    public void logout(LogoutRequest request) throws UnauthorizedException {
+        String authToken = request.authToken();
+
+        auth.deleteAuthToken(authToken);
+    }
 }

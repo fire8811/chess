@@ -1,6 +1,7 @@
 package server;
 import dataaccess.*;
 import model.ErrorMessage;
+import model.LogoutRequest;
 import model.RegisterRequest;
 import com.google.gson.Gson;
 import service.ClearService;
@@ -33,6 +34,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
 
@@ -83,6 +85,13 @@ public class Server {
         var loginResult = userService.login(loginRequest);
         res.status(200);
         return new Gson().toJson(loginResult);
+    }
+
+    private Object logout(Request req, Response res) throws UnauthorizedException{
+        String authtoken = req.headers("authorization");
+        userService.logout(new LogoutRequest(authtoken));
+        res.status(200);
+        return "";
     }
 
     private Object clear(Request req, Response res)  {
