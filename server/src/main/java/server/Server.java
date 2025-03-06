@@ -1,10 +1,9 @@
 package server;
 import dataaccess.*;
-import model.ErrorMessage;
-import model.LogoutRequest;
-import model.RegisterRequest;
+import model.*;
 import com.google.gson.Gson;
 import service.ClearService;
+import service.GameService;
 import service.UserService;
 import spark.*;
 
@@ -16,6 +15,7 @@ public class Server {
     private AuthDAO authDAO;
     private ClearService clearService;
     private UserService userService;
+    private GameService gameService;
 
     public Server(){
         this.userDAO = new MemoryUserDAO();
@@ -24,6 +24,7 @@ public class Server {
 
         clearService = new ClearService(authDAO, userDAO, gameDAO);
         userService = new UserService(authDAO, userDAO, gameDAO);
+        gameService = new GameService(authDAO, gameDAO);
     }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -35,6 +36,8 @@ public class Server {
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
 
@@ -92,6 +95,24 @@ public class Server {
         userService.logout(new LogoutRequest(authtoken));
         res.status(200);
         return "";
+    }
+
+    private Object listGames(Request req, Response res) throws UnauthorizedException{
+        String authToken = req.headers("authorization");
+        ListResult listResult = gameService.listGames(new ListRequest(authToken));
+        res.status(200);
+        return new Gson().toJson(listResult);
+    }
+
+    private Object createGame(Request req, Response res) throws UnauthorizedException, BadRequestException {
+        String authToken = req.headers("authorization");
+        CreateRequest createRequest = new Gson().fromJson(req.body(), model.CreateRequest.class); //add gameName from JSON body
+        createRequest = new CreateRequest(authToken, createRequest.gameName()); //add authToken from header to record
+
+        CreateResult createResult = gameService.createGame(createRequest);
+
+        res.status(200);
+        return new Gson().toJson(createResult);
     }
 
     private Object clear(Request req, Response res)  {

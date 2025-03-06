@@ -20,13 +20,21 @@ public class MemoryAuthDAO implements AuthDAO {
         authDataMemory.clear();
     }
 
-    public void deleteAuthToken(String authToken) throws UnauthorizedException {
+    public int findAuthToken(String authToken) throws UnauthorizedException{
         for (int i = 0; i < authDataMemory.size(); i++){
             if(authDataMemory.get(i).authToken().equals(authToken)){
-                authDataMemory.remove(i);
-                return;
+                return i;
             }
         }
         throw new UnauthorizedException("unauthorized"); //authData not in memory
     }
+
+    public void deleteAuthToken(String authToken) throws UnauthorizedException {
+        int tokenIndex = findAuthToken(authToken);
+        authDataMemory.remove(tokenIndex);
+    }
+
+//    public void verifyAuthToken(String authToken) throws UnauthorizedException {
+//        findAuthToken(authToken); //exception thrown in findAuthToken means the token is invalid (not found)
+//    }
 }

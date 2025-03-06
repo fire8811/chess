@@ -10,4 +10,6 @@ public interface AuthDAO {
     void addAuthData(AuthData authData);
     ArrayList<AuthData> getAuths();
     void deleteAuthToken(String authToken) throws UnauthorizedException;
+    int findAuthToken(String authToken) throws UnauthorizedException;
+
 }
