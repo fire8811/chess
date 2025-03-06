@@ -1,9 +1,6 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.BadRequestException;
-import dataaccess.GameDAO;
-import dataaccess.UnauthorizedException;
+import dataaccess.*;
 import model.*;
 
 import java.util.ArrayList;
@@ -34,5 +31,26 @@ public class GameService {
 
         int gameID = games.createGame(request.gameName());
         return new CreateResult((gameID));
+    }
+
+    public JoinResult joinGame(JoinRequest request) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        String authToken = request.authToken();
+        auth.findAuthToken(authToken);
+        String username = auth.getUsername(authToken);
+
+        Integer gameID = request.gameID();
+        if (gameID == null){
+            throw new BadRequestException("bad request");
+        }
+
+        boolean gameExists = games.findGame(gameID);
+        if (gameExists){
+            games.updateGame(gameID, request.playerColor(), username);
+        }
+        else {
+            throw new BadRequestException("bad request");
+        }
+
+        return new JoinResult(request.playerColor(), gameID);
     }
 }

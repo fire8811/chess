@@ -1,4 +1,6 @@
 package model;
 
-public record JoinResult(String playerColor, int gameID) {
+import chess.ChessGame;
+
+public record JoinResult(ChessGame.TeamColor playerColor, int gameID) {
 }

@@ -34,6 +34,11 @@ public class MemoryAuthDAO implements AuthDAO {
         authDataMemory.remove(tokenIndex);
     }
 
+    public String getUsername(String authToken) throws UnauthorizedException {
+        int tokenIndex = findAuthToken(authToken);
+        return authDataMemory.get(tokenIndex).username();
+    }
+
 //    public void verifyAuthToken(String authToken) throws UnauthorizedException {
 //        findAuthToken(authToken); //exception thrown in findAuthToken means the token is invalid (not found)
 //    }

@@ -38,6 +38,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
 
@@ -63,6 +64,9 @@ public class Server {
         }
         else if (ex instanceof UnauthorizedException){
             res.status(401);
+        }
+        else if (ex instanceof AlreadyTakenException){
+            res.status(403);
         }
         else {
             res.status(500);
@@ -113,6 +117,16 @@ public class Server {
 
         res.status(200);
         return new Gson().toJson(createResult);
+    }
+
+    private Object joinGame(Request req, Response res) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        String authToken = req.headers("authorization");
+        JoinRequest joinRequest = new Gson().fromJson(req.body(), model.JoinRequest.class);
+        joinRequest = new JoinRequest(authToken, joinRequest.playerColor(), joinRequest.gameID());
+
+        JoinResult joinResult = gameService.joinGame(joinRequest);
+        res.status(200);
+        return new Gson().toJson(joinResult);
     }
 
     private Object clear(Request req, Response res)  {
