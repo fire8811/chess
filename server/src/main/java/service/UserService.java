@@ -16,7 +16,7 @@ public class UserService {
     }
 
     public void checkIfValidRegisterRequest(RegisterRequest request) throws BadRequestException{
-        if (request.username().isEmpty() || request.password().isEmpty() || request.email().isEmpty()){
+        if (request.username() == null || request.password() == null || request.email() == null){
             throw new BadRequestException("bad request");
         }
     }

@@ -35,7 +35,7 @@ public class MyServiceTests {
     @Test
     void testRegisterNegative() {
         assertThrows(BadRequestException.class, () ->
-        userService.register(new RegisterRequest("jonbob", "oogabooga", "")));
+        userService.register(new RegisterRequest("jonbob", "oogabooga", null)));
     }
 
     @Test
@@ -60,6 +60,7 @@ public class MyServiceTests {
         registerValidUser();
         assertThrows(UnauthorizedException.class, () ->
                 userService.login(new LoginRequest("jonbob", "wii")));
-
     }
+
+
 }
