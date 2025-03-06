@@ -19,12 +19,17 @@ public class MemoryUserDAO implements UserDAO{
             return true;
         }
         else {
-            throw new UsernameTakenException("username already taken!");
+            throw new UsernameTakenException("already taken");
         }
     }
 
-    public boolean findUser(String username) {
-        return(usersMemory.containsKey(username));
+    public boolean findUser(String username, String password) throws UnauthorizedException {
+        if (usersMemory.containsKey(username) && usersMemory.get(username).password().equals(password)){
+            return true;
+        }
+        else {
+            throw new UnauthorizedException("unauthorized");
+        }
     }
 
     public void addUser(UserData userData) {

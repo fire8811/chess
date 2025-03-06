@@ -32,6 +32,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
 
@@ -55,6 +56,9 @@ public class Server {
         else if (ex instanceof UsernameTakenException){
             res.status(403);
         }
+        else if (ex instanceof UnauthorizedException){
+            res.status(401);
+        }
         else {
             res.status(500);
         }
@@ -72,6 +76,13 @@ public class Server {
         var registerResult = userService.register(registerRequest);
         res.status(200);
         return new Gson().toJson(registerResult);
+    }
+
+    private Object login(Request req, Response res) throws UnauthorizedException {
+        var loginRequest = new Gson().fromJson(req.body(), model.LoginRequest.class);
+        var loginResult = userService.login(loginRequest);
+        res.status(200);
+        return new Gson().toJson(loginResult);
     }
 
     private Object clear(Request req, Response res)  {

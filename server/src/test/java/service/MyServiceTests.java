@@ -41,4 +41,9 @@ public class MyServiceTests {
         assertEquals(0, authDAO.getAuths().size());
         assertEquals(0, gameDAO.getGamesFromMemory().size());
     }
+
+    @Test
+    void testLoginValid() throws UnauthorizedException{
+        
+    }
 }

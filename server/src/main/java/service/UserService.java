@@ -1,9 +1,6 @@
 package service;
 import dataaccess.*;
-import model.AuthData;
-import model.RegisterRequest;
-import model.RegisterResult;
-import model.UserData;
+import model.*;
 
 import java.util.UUID;
 
@@ -40,8 +37,17 @@ public class UserService {
         else {
             throw new UsernameTakenException("already taken");
         }
+    }
 
+    public LoginResult login(LoginRequest request) throws UnauthorizedException {
+        String username = request.username();
+        String password = request.password();
 
+        users.findUser(username, password);
+        AuthData authData = new AuthData(generateToken(), username);
+        auth.addAuthData(authData);
+
+        return new LoginResult(username, authData.authToken());
     }
 
     private static String generateToken(){
