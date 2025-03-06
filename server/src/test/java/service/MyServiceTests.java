@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 
 import model.*;
@@ -89,5 +90,26 @@ public class MyServiceTests {
     void testCreateGameException() throws UnauthorizedException { //create game without an authToken
         assertThrows(UnauthorizedException.class, () ->
                 gameService.createGame(new CreateRequest("", "banana")));
+    }
+
+    @Test
+    void testListGames() throws UnauthorizedException, BadRequestException, UsernameTakenException {
+        registerValidUser();
+        String authToken = authDAO.getAuths().get(0).authToken();
+        gameService.createGame(new CreateRequest(authToken, "banana"));
+
+        ListResult listResult = new ListResult(gameDAO.getGamesFromMemory());
+        GameData actualGame = listResult.games().iterator().next();
+
+        assertEquals(1, actualGame.gameID());
+        assertEquals(null, actualGame.whiteUsername());
+        assertEquals(null, actualGame.blackUserName());
+        assertEquals("banana", actualGame.gameName());
+    }
+
+    @Test
+    void testListGamesException() throws UnauthorizedException, BadRequestException, UsernameTakenException {
+        assertThrows(UnauthorizedException.class, () ->
+                gameService.listGames(new ListRequest("")));
     }
 }
