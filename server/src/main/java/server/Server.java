@@ -9,6 +9,7 @@ import spark.*;
 
 import javax.xml.crypto.Data;
 
+
 public class Server {
     private UserDAO userDAO;
     private GameDAO gameDAO;
