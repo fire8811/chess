@@ -19,7 +19,7 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         updateTable(statement, authToken, username);
     }
 
-    public void clearAuths() throws SQLException, DataAccessException {
+    public void clearAuths() throws DataAccessException, SQLException {
         var command = "TRUNCATE auth";
         updateTable(command);
     }

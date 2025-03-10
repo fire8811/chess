@@ -1,7 +1,10 @@
 package service;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
+
+import java.sql.SQLException;
 
 //question for TA: the clearservice is accessing the entire DAO classes when it really only needs to access the clear methods. Is this best practice?
 public class ClearService {
@@ -14,8 +17,9 @@ public class ClearService {
         this.users = users;
         this.games = games;
     }
-    public void clear(){
-        auth.clearAuthtokens();
+
+    public void clear() throws SQLException, DataAccessException {
+        auth.clearAuths();
         users.clearUsers();
         games.clearGames();
     }
