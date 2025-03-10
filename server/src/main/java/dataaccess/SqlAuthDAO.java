@@ -1,14 +1,25 @@
 package dataaccess;
 
+import model.AuthData;
+import org.eclipse.jetty.server.Response;
+
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
-public class SqlAuthDAO implements AuthDAO {
+public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
     public SqlAuthDAO() throws SQLException, DataAccessException {
-        configureDatabase();
+        configureDatabase(createAuthSchema);
     }
 
-    private void clearDatabase() throws SQLException, DataAccessException {
+    public void addAuthData(AuthData authData) throws SQLException, DataAccessException {
+        String username = authData.username();
+        String authToken = authData.authToken();
+
+        var statement = "INSERT into auth VALUES (token, username) VALUES (?, ?, ?)";
+        updateTable(statement, authToken, username);
+    }
+
+    public void clearAuths() throws SQLException, DataAccessException {
         var command = "TRUNCATE auth";
         updateTable(command);
     }
@@ -22,6 +33,9 @@ public class SqlAuthDAO implements AuthDAO {
                 }
             }
         }
+        catch (SQLException e){
+            throw new ResponseException(String.format("can't update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
     private final String[] createAuthSchema = {
@@ -34,16 +48,16 @@ public class SqlAuthDAO implements AuthDAO {
         """
     };
 
-    private void configureDatabase() throws ResponseException, DataAccessException, SQLException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createAuthSchema) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new ResponseException(String.format("Can't configure database: %s", e.getMessage()));
-        }
-    }
+//    private void configureDatabase() throws ResponseException, DataAccessException, SQLException {
+//        DatabaseManager.createDatabase();
+//        try (var conn = DatabaseManager.getConnection()) {
+//            for (var statement : createAuthSchema) {
+//                try (var preparedStatement = conn.prepareStatement(statement)) {
+//                    preparedStatement.executeUpdate();
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new ResponseException(String.format("Can't configure database: %s", e.getMessage()));
+//        }
+//    }
 }
