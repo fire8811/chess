@@ -13,7 +13,7 @@ public interface AuthDAO {
     void addAuthData(AuthData authData) throws SQLException, DataAccessException;
 //    ArrayList<AuthData> getAuths();
 
-//    void deleteAuthToken(String authToken) throws UnauthorizedException;
+    void deleteAuthData(String authToken) throws DataAccessException;
 //    int findAuthToken(String authToken) throws UnauthorizedException;
 //    String getUsername(String authToken) throws UnauthorizedException;
 }

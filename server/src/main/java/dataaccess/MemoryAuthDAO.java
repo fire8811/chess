@@ -29,7 +29,7 @@ public class MemoryAuthDAO implements AuthDAO {
         throw new UnauthorizedException("unauthorized"); //authData not in memory
     }
 
-    public void deleteAuthToken(String authToken) throws UnauthorizedException {
+    public void deleteAuthData(String authToken) throws UnauthorizedException {
         int tokenIndex = findAuthToken(authToken);
         authDataMemory.remove(tokenIndex);
     }

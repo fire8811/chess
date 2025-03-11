@@ -19,6 +19,7 @@ public class MyServiceTests {
     static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
     final UserDAO userDatabase = new SqlUserDAO();
     final AuthDAO authDatabase = new SqlAuthDAO();
+    static final AuthData authData = new AuthData(UUID.randomUUID().toString(), "jonbob");
 
     final ClearService clearService = new ClearService(AUTH_DAO, USER_DAO, GAME_DAO);
     final UserService userService = new UserService(AUTH_DAO, USER_DAO, GAME_DAO);
@@ -152,6 +153,12 @@ public class MyServiceTests {
 
     @Test void testAddAuthdata() throws DataAccessException, SQLException {
         authDatabase.addAuthData(new AuthData(UUID.randomUUID().toString(), "jonbob"));
+    }
+
+    @Test void testDeleteAuthData() throws DataAccessException, SQLException {
+        AuthData authData = new AuthData(UUID.randomUUID().toString(), "bruno");
+        authDatabase.addAuthData(authData);
+        authDatabase.deleteAuthData(authData.authToken());
     }
 
     @Test void testFindUser() throws UnauthorizedException, DataAccessException, SQLException {

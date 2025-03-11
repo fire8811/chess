@@ -19,6 +19,17 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         updateTable(statement, authToken, username);
     }
 
+    public void deleteAuthData(String authToken) throws DataAccessException {
+        try (var goodConnect = DatabaseManager.getConnection()){
+            try(var preparedStatement = goodConnect.prepareStatement("DELETE FROM auth WHERE token=?")){
+                preparedStatement.setString(1, authToken);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("something went wrong when trying to delete authData: %s", e.getMessage()));
+        }
+    }
+
     public void clearAuths() throws DataAccessException, SQLException {
         var command = "TRUNCATE auth";
         updateTable(command);
