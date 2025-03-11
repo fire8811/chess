@@ -7,6 +7,7 @@ import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -153,5 +154,7 @@ public class MyServiceTests {
         authDatabase.addAuthData(new AuthData(UUID.randomUUID().toString(), "jonbob"));
     }
 
-
+    @Test void testFindUser() throws UnauthorizedException, DataAccessException, SQLException {
+        assertTrue(userDatabase.findUser("jonbob", "banana"));
+    }
 }

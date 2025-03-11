@@ -11,6 +11,27 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
         configureDatabase(createUserSchema);
     }
 
+    public boolean findUser(String username, String passwordClearText) throws DataAccessException, SQLException {
+        try (var conn = DatabaseManager.getConnection()){
+            try (var preparedStatement = conn.prepareStatement("SELECT username, password FROM users WHERE username=?")) {
+                preparedStatement.setString(1, username);
+
+                try(var result = preparedStatement.executeQuery()){
+                    while(result.next()){
+                        String storedPassword = result.getString("password");
+                        if(BCrypt.checkpw(passwordClearText, storedPassword)){
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e){
+            throw new ResponseException(String.format("Couldn't retrieve username or password from database: %s", e.getMessage()));
+        }
+
+        throw new UnauthorizedException("unauthorized");
+    }
+
     public boolean isUsernameFree(String username) throws UsernameTakenException, SQLException, DataAccessException{
         try(var goodConnection = DatabaseManager.getConnection()){
             var command = "SELECT 1 FROM users WHERE username = ?";

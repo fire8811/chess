@@ -9,7 +9,7 @@ import java.util.HashMap;
 public interface UserDAO {
     void clearUsers() throws DataAccessException, SQLException;
     boolean isUsernameFree(String username) throws UsernameTakenException, SQLException, DataAccessException;
-//    boolean findUser(String username, String password) throws UnauthorizedException;
+    boolean findUser(String username, String password) throws UnauthorizedException, DataAccessException, SQLException;
     void addUser(UserData userData) throws SQLException, DataAccessException;
 //    HashMap<String, UserData> getUsers();
 }
