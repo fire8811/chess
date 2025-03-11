@@ -164,4 +164,9 @@ public class MyServiceTests {
     @Test void testFindUser() throws UnauthorizedException, DataAccessException, SQLException {
         assertTrue(userDatabase.findUser("jonbob", "banana"));
     }
+
+    @Test void testClearSQL() throws SQLException, DataAccessException {
+        authDatabase.clearAuths();
+        userDatabase.clearUsers();;
+    }
 }

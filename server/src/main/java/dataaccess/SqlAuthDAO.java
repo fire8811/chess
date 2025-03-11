@@ -11,6 +11,11 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         configureDatabase(createAuthSchema);
     }
 
+    public boolean authTokenExists(String authToken){
+        
+
+    }
+
     public void addAuthData(AuthData authData) throws SQLException, DataAccessException {
         String username = authData.username();
         String authToken = authData.authToken();

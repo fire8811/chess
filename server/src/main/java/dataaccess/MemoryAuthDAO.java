@@ -20,7 +20,16 @@ public class MemoryAuthDAO implements AuthDAO {
         authDataMemory.clear();
     }
 
-    public int findAuthToken(String authToken) throws UnauthorizedException{
+    public boolean authTokenExists(String authToken) throws UnauthorizedException {
+        try {
+            Object tokenFound = getAuthTokenIndex(authToken);
+            return true;
+        } catch (UnauthorizedException e){
+            throw new UnauthorizedException(e.getMessage()); //authData not in memory
+        }
+    }
+
+    public int getAuthTokenIndex(String authToken) throws UnauthorizedException{
         for (int i = 0; i < authDataMemory.size(); i++){
             if(authDataMemory.get(i).authToken().equals(authToken)){
                 return i;
@@ -30,12 +39,12 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public void deleteAuthData(String authToken) throws UnauthorizedException {
-        int tokenIndex = findAuthToken(authToken);
+        int tokenIndex = getAuthTokenIndex(authToken);
         authDataMemory.remove(tokenIndex);
     }
 
     public String getUsername(String authToken) throws UnauthorizedException {
-        int tokenIndex = findAuthToken(authToken);
+        int tokenIndex = getAuthTokenIndex(authToken);
         return authDataMemory.get(tokenIndex).username();
     }
 }

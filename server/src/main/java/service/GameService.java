@@ -16,7 +16,7 @@ public class GameService {
 
 //    public ListResult listGames(ListRequest request) throws UnauthorizedException {
 //        String authToken = request.authToken();
-//        auth.findAuthToken(authToken); //verify authToken
+//        auth.authTokenExists(authToken); //verify authToken
 //
 //        return new ListResult(games.getGamesFromMemory());
 //    }
@@ -27,7 +27,7 @@ public class GameService {
 //        }
 //
 //        String authToken = request.authToken();
-//        auth.findAuthToken(authToken);
+//        auth.authTokenExists(authToken);
 //
 //        int gameID = games.createGame(request.gameName());
 //        return new CreateResult((gameID));
@@ -35,7 +35,7 @@ public class GameService {
 //
 //    public JoinResult joinGame(JoinRequest request) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
 //        String authToken = request.authToken();
-//        auth.findAuthToken(authToken);
+//        auth.authTokenExists(authToken);
 //        String username = auth.getUsername(authToken);
 //
 //        Integer gameID = request.gameID();

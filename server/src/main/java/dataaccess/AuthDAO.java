@@ -14,6 +14,6 @@ public interface AuthDAO {
 //    ArrayList<AuthData> getAuths();
 
     void deleteAuthData(String authToken) throws DataAccessException;
-//    int findAuthToken(String authToken) throws UnauthorizedException;
+    boolean authTokenExists(String authToken) throws UnauthorizedException;
 //    String getUsername(String authToken) throws UnauthorizedException;
 }
