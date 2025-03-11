@@ -22,7 +22,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public boolean authTokenExists(String authToken) throws UnauthorizedException {
         try {
-            Object tokenFound = getAuthTokenIndex(authToken);
+            getAuthTokenIndex(authToken); //if getAuthTokenIndex returns an index it means the token exists
             return true;
         } catch (UnauthorizedException e){
             throw new UnauthorizedException(e.getMessage()); //authData not in memory

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessPiece;
 import model.AuthData;
 import org.eclipse.jetty.server.Response;
 
@@ -11,9 +12,39 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         configureDatabase(createAuthSchema);
     }
 
-    public boolean authTokenExists(String authToken){
-        
+    public String getUsername(String authToken) throws DataAccessException, SQLException {
+        try (var goodConnection = DatabaseManager.getConnection()){
+            try (var preparedStatement = goodConnection.prepareStatement("SELECT username FROM auth WHERE token=?")){
+                preparedStatement.setString(1, authToken);
 
+                try (var result = preparedStatement.executeQuery()){
+                    if (result.next()){
+                        String username = result.getString("username");
+                        return username;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("something went wrong when trying to access the auth database: %s", e.getMessage()));
+        }
+        throw new UnauthorizedException("unauthorized"); //token ont found in database, meaning player isn't authorized
+    }
+
+    public boolean authTokenExists(String authToken) throws DataAccessException {
+        try (var goodConnection = DatabaseManager.getConnection()){
+            try (var preparedStatement = goodConnection.prepareStatement("SELECT token FROM auth WHERE token=?")) {
+                preparedStatement.setString(1, authToken);
+
+                try (var result = preparedStatement.executeQuery()){
+                    if (result.next()){ //token found in database
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("something went wrong when trying to access the auth database: %s", e.getMessage()));
+        }
+        throw new UnauthorizedException("unauthorized"); //token not found in database meaning player isn't authorized
     }
 
     public void addAuthData(AuthData authData) throws SQLException, DataAccessException {
