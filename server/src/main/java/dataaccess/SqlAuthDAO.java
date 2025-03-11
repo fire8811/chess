@@ -15,7 +15,7 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         String username = authData.username();
         String authToken = authData.authToken();
 
-        var statement = "INSERT into auth VALUES (token, username) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO auth (token, username) VALUES (?, ?)";
         updateTable(statement, authToken, username);
     }
 
@@ -31,6 +31,7 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
                     String param = (String) params[i];
                     preparedStatement.setString(i+1, param);
                 }
+                preparedStatement.executeUpdate();
             }
         }
         catch (SQLException e){
@@ -41,9 +42,9 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
     private final String[] createAuthSchema = {
         """
         CREATE TABLE IF NOT EXISTS auth (
-        'token' varchar(256) NOT NULL
-        'username' varchar(256) NOT NULL
-        PRIMARY KEY ('token')
+        `token` varchar(256) NOT NULL,
+        `username` varchar(256) NOT NULL,
+        PRIMARY KEY (`token`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """
     };

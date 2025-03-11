@@ -2,6 +2,7 @@ package service;
 import dataaccess.*;
 import model.*;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
@@ -15,13 +16,17 @@ public class UserService {
         this.users = users;
     }
 
+    private static String generateToken(){
+        return UUID.randomUUID().toString();
+    }
+
     public void checkIfValidRegisterRequest(RegisterRequest request) throws BadRequestException{
         if (request.username() == null || request.password() == null || request.email() == null){
             throw new BadRequestException("bad request");
         }
     }
 
-    public RegisterResult register(RegisterRequest registerRequest) throws UsernameTakenException, BadRequestException {
+    public RegisterResult register(RegisterRequest registerRequest) throws DataAccessException, SQLException {
         checkIfValidRegisterRequest(registerRequest);
 
         String username = registerRequest.username();
@@ -39,24 +44,22 @@ public class UserService {
         }
     }
 
-    public LoginResult login(LoginRequest request) throws UnauthorizedException {
-        String username = request.username();
-        String password = request.password();
+//    public LoginResult login(LoginRequest request) throws UnauthorizedException {
+//        String username = request.username();
+//        String password = request.password();
+//
+//        users.findUser(username, password);
+//        AuthData authData = new AuthData(generateToken(), username);
+//        auth.addAuthData(authData);
+//
+//        return new LoginResult(username, authData.authToken());
+//    }
+//
 
-        users.findUser(username, password);
-        AuthData authData = new AuthData(generateToken(), username);
-        auth.addAuthData(authData);
-
-        return new LoginResult(username, authData.authToken());
-    }
-
-    private static String generateToken(){
-        return UUID.randomUUID().toString();
-    }
-
-    public void logout(LogoutRequest request) throws UnauthorizedException {
-        String authToken = request.authToken();
-
-        auth.deleteAuthToken(authToken);
-    }
+//
+//    public void logout(LogoutRequest request) throws UnauthorizedException {
+//        String authToken = request.authToken();
+//
+//        auth.deleteAuthToken(authToken);
+//    }
 }

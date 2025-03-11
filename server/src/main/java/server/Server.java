@@ -8,6 +8,7 @@ import service.UserService;
 import spark.*;
 
 import javax.xml.crypto.Data;
+import java.sql.SQLException;
 
 
 public class Server {
@@ -35,11 +36,11 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
-        Spark.post("/session", this::login);
-        Spark.delete("/session", this::logout);
-        Spark.get("/game", this::listGames);
-        Spark.post("/game", this::createGame);
-        Spark.put("/game", this::joinGame);
+//        Spark.post("/session", this::login);
+//        Spark.delete("/session", this::logout);
+//        Spark.get("/game", this::listGames);
+//        Spark.post("/game", this::createGame);
+//        Spark.put("/game", this::joinGame);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
 
 
@@ -81,56 +82,56 @@ public class Server {
         //and then set a status code variable to be the correct code in a series of if statements.
     }
 
-    private Object register(Request req, Response res) throws DataAccessException{
+    private Object register(Request req, Response res) throws DataAccessException, SQLException {
         var registerRequest = new Gson().fromJson(req.body(), model.RegisterRequest.class);
         var registerResult = userService.register(registerRequest);
         res.status(200);
         return new Gson().toJson(registerResult);
     }
 
-    private Object login(Request req, Response res) throws UnauthorizedException {
-        var loginRequest = new Gson().fromJson(req.body(), model.LoginRequest.class);
-        var loginResult = userService.login(loginRequest);
-        res.status(200);
-        return new Gson().toJson(loginResult);
-    }
+//    private Object login(Request req, Response res) throws UnauthorizedException {
+//        var loginRequest = new Gson().fromJson(req.body(), model.LoginRequest.class);
+//        var loginResult = userService.login(loginRequest);
+//        res.status(200);
+//        return new Gson().toJson(loginResult);
+//    }
 
-    private Object logout(Request req, Response res) throws UnauthorizedException{
-        String authtoken = req.headers("authorization");
-        userService.logout(new LogoutRequest(authtoken));
-        res.status(200);
-        return "";
-    }
+//    private Object logout(Request req, Response res) throws UnauthorizedException{
+//        String authtoken = req.headers("authorization");
+//        userService.logout(new LogoutRequest(authtoken));
+//        res.status(200);
+//        return "";
+//    }
 
-    private Object listGames(Request req, Response res) throws UnauthorizedException{
-        String authToken = req.headers("authorization");
-        ListResult listResult = gameService.listGames(new ListRequest(authToken));
-        res.status(200);
-        return new Gson().toJson(listResult);
-    }
+//    private Object listGames(Request req, Response res) throws UnauthorizedException{
+//        String authToken = req.headers("authorization");
+//        ListResult listResult = gameService.listGames(new ListRequest(authToken));
+//        res.status(200);
+//        return new Gson().toJson(listResult);
+//    }
 
-    private Object createGame(Request req, Response res) throws UnauthorizedException, BadRequestException {
-        String authToken = req.headers("authorization");
-        CreateRequest createRequest = new Gson().fromJson(req.body(), model.CreateRequest.class); //add gameName from JSON body
-        createRequest = new CreateRequest(authToken, createRequest.gameName()); //add authToken from header to record
+//    private Object createGame(Request req, Response res) throws UnauthorizedException, BadRequestException {
+//        String authToken = req.headers("authorization");
+//        CreateRequest createRequest = new Gson().fromJson(req.body(), model.CreateRequest.class); //add gameName from JSON body
+//        createRequest = new CreateRequest(authToken, createRequest.gameName()); //add authToken from header to record
+//
+//        CreateResult createResult = gameService.createGame(createRequest);
+//
+//        res.status(200);
+//        return new Gson().toJson(createResult);
+//    }
 
-        CreateResult createResult = gameService.createGame(createRequest);
+//    private Object joinGame(Request req, Response res) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+//        String authToken = req.headers("authorization");
+//        JoinRequest joinRequest = new Gson().fromJson(req.body(), model.JoinRequest.class);
+//        joinRequest = new JoinRequest(authToken, joinRequest.playerColor(), joinRequest.gameID());
+//
+//        JoinResult joinResult = gameService.joinGame(joinRequest);
+//        res.status(200);
+//        return new Gson().toJson(joinResult);
+//    }
 
-        res.status(200);
-        return new Gson().toJson(createResult);
-    }
-
-    private Object joinGame(Request req, Response res) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        String authToken = req.headers("authorization");
-        JoinRequest joinRequest = new Gson().fromJson(req.body(), model.JoinRequest.class);
-        joinRequest = new JoinRequest(authToken, joinRequest.playerColor(), joinRequest.gameID());
-
-        JoinResult joinResult = gameService.joinGame(joinRequest);
-        res.status(200);
-        return new Gson().toJson(joinResult);
-    }
-
-    private Object clear(Request req, Response res)  {
+    private Object clear(Request req, Response res) throws SQLException, DataAccessException {
         clearService.clear();
         res.status(200);
         return "";

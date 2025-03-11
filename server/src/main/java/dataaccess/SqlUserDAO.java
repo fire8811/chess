@@ -54,6 +54,7 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
                     String param = (String) params[i];
                     preparedStatement.setString(i+1, param);
                 }
+                preparedStatement.executeUpdate();
             }
         }
         catch (SQLException e) {
@@ -64,10 +65,10 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
     private final String[] createUserSchema = {
         """
         CREATE TABLE IF NOT EXISTS users (
-            'username' varchar(256) NOT NULL,
-            'password' varchar(256) NOT NULL,
-            'email' varchar(256) NOT NULL,
-            PRIMARY KEY ('username')
+            `username` varchar(256) NOT NULL,
+            `password` varchar(256) NOT NULL,
+            `email` varchar(256) NOT NULL,
+            PRIMARY KEY (`username`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """
     };
