@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -62,8 +63,21 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return false;
     }
 
-    public boolean findGame(int gameID) {
-        return false;
+    public boolean findGame(int gameID) throws DataAccessException { //checks to see if the gameID is in the database
+        try (var goodConnection = DatabaseManager.getConnection()){
+            var command = "SELECT 1 FROM games WHERE gameID=?";
+            try (var preparedStatement = goodConnection.prepareStatement(command)) {
+                preparedStatement.setInt(1, gameID);
+                try (var retrieved = preparedStatement.executeQuery()) {
+                    if (retrieved.next()) { //gameID exists in table, return true;
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("Error when trying to find gameID in table:%s", e.getMessage()));
+        }
+        return false; //no gameID found in table;
     }
 
     public GameData getGame(Integer id) {
