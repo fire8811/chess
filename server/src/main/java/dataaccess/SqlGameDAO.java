@@ -15,8 +15,9 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         configureDatabase(createGameSchema);
     }
 
-    public void clearGames() {
-        
+    public void clearGames() throws SQLException, DataAccessException {
+        var command = "TRUNCATE games";
+        updateTable(command);
     }
 
     public Collection<GameData> listGames() throws DataAccessException {
@@ -66,6 +67,21 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
 
     public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws BadRequestException, AlreadyTakenException {
 
+    }
+
+    private void updateTable(String statement, Object... params) throws DataAccessException, SQLException {
+        try (var goodConnect = DatabaseManager.getConnection()){
+            try (var preparedStatement = goodConnect.prepareStatement(statement)){
+                for (int i = 0; i < params.length; i++){
+                    String param = (String) params[i];
+                    preparedStatement.setString(i+1, param);
+                }
+                preparedStatement.executeUpdate();
+            }
+        }
+        catch (SQLException e){
+            throw new ResponseException(String.format("can't update database: %s, %s", statement, e.getMessage()));
+        }
     }
 
     private String[] createGameSchema = {
