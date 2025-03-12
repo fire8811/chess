@@ -44,22 +44,20 @@ public class UserService {
         }
     }
 
-//    public LoginResult login(LoginRequest request) throws UnauthorizedException {
-//        String username = request.username();
-//        String password = request.password();
-//
-//        users.findUser(username, password);
-//        AuthData authData = new AuthData(generateToken(), username);
-//        auth.addAuthData(authData);
-//
-//        return new LoginResult(username, authData.authToken());
-//    }
-//
+    public LoginResult login(LoginRequest request) throws DataAccessException, SQLException {
+        String username = request.username();
+        String password = request.password();
 
-//
-//    public void logout(LogoutRequest request) throws UnauthorizedException {
-//        String authToken = request.authToken();
-//
-//        auth.deleteAuthToken(authToken);
-//    }
+        users.findUser(username, password);
+        AuthData authData = new AuthData(generateToken(), username);
+        auth.addAuthData(authData);
+
+        return new LoginResult(username, authData.authToken());
+    }
+
+    public void logout(LogoutRequest request) throws DataAccessException {
+        String authToken = request.authToken();
+
+        auth.deleteAuthData(authToken);
+    }
 }

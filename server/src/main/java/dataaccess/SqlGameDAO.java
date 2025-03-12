@@ -77,9 +77,6 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return false; //no gameID found in table;
     }
 
-//    public GameData getGame(Integer id) {
-//
-//    }
     private String getCorrectStatement(ChessGame.TeamColor color){
         if (color == ChessGame.TeamColor.WHITE){
             return "SELECT whiteUsername FROM games WHERE gameID=?";

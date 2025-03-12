@@ -7,14 +7,12 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO{
-    //QUESTION FOR TA: is it bad to have GameData Object in data structure, meaning I'd have to break up its attributes into a list maybe?
-    //like this: HashMap<Integer, List> (gameID: [rest of attributes in list here)
     private int gameID = 1;
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
-//    public GameData getGame(Integer id){
-//        return games.get(id);
-//    }
+    public GameData getGame(Integer id){ //method used for testing
+        return games.get(id);
+    }
 
     public Collection<GameData> listGames(){
         return games.values();

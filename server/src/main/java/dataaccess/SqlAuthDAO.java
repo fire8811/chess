@@ -6,6 +6,7 @@ import org.eclipse.jetty.server.Response;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
     public SqlAuthDAO() throws SQLException, DataAccessException {
@@ -95,17 +96,4 @@ public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """
     };
-
-//    private void configureDatabase() throws ResponseException, DataAccessException, SQLException {
-//        DatabaseManager.createDatabase();
-//        try (var conn = DatabaseManager.getConnection()) {
-//            for (var statement : createAuthSchema) {
-//                try (var preparedStatement = conn.prepareStatement(statement)) {
-//                    preparedStatement.executeUpdate();
-//                }
-//            }
-//        } catch (SQLException e) {
-//            throw new ResponseException(String.format("Can't configure database: %s", e.getMessage()));
-//        }
-//    }
 }

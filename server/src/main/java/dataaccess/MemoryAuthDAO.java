@@ -6,11 +6,10 @@ import model.AuthData;
 
 public class MemoryAuthDAO implements AuthDAO {
     final private ArrayList<AuthData> authDataMemory = new ArrayList<>();
-    //final private HashMap<String, String> authDataMemory = new HashMap<>(); //k: username v: authToken
 
     public ArrayList<AuthData> getAuths() { //getter used for controlled testing
         return authDataMemory;
-    }
+    } //method used for testing
 
     public void addAuthData(AuthData authData){
         authDataMemory.add(authData);

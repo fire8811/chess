@@ -11,5 +11,5 @@ public interface UserDAO {
     boolean isUsernameFree(String username) throws UsernameTakenException, SQLException, DataAccessException;
     boolean findUser(String username, String password) throws UnauthorizedException, DataAccessException, SQLException;
     void addUser(UserData userData) throws SQLException, DataAccessException;
-    //HashMap<String, UserData> getUsers(); yea this is needed for my memory tests
+    //HashMap<String, UserData> getUsers();
 }
