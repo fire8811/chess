@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -181,5 +182,11 @@ public class MyServiceTests {
 
     @Test void testCreateGame() throws SQLException, DataAccessException {
         gameDatabase.createGame("juego");
+    }
+
+    @Test void testListGames() throws DataAccessException {
+        ArrayList<GameData> gamesList = (ArrayList<GameData>) gameDatabase.listGames();
+        assertEquals(1, gamesList.size());
+
     }
 }
