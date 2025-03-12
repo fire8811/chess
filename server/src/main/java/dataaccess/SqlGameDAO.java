@@ -6,6 +6,7 @@ import model.GameData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,8 +50,12 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
     }
 
-    public int createGame(String gameName) throws UnauthorizedException, BadRequestException {
-        return 0;
+    public int createGame(String gameName) throws DataAccessException, SQLException {
+        var command = "INSERT INTO games (gameName, chessGame) VALUES (?, ?)";
+        ChessGame chessGameToAdd = new ChessGame();
+        var chessGameJson = new Gson().toJson(chessGameToAdd);
+
+        return updateTable(command, gameName, chessGameJson); //create game and return gameID int
     }
 
     public boolean isColorAvailable(GameData game, ChessGame.TeamColor color) {
@@ -69,24 +74,31 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
 
     }
 
-    private void updateTable(String statement, Object... params) throws DataAccessException, SQLException {
+    private int updateTable(String statement, Object... params) throws DataAccessException, SQLException {
         try (var goodConnect = DatabaseManager.getConnection()){
-            try (var preparedStatement = goodConnect.prepareStatement(statement)){
+            try (var preparedStatement = goodConnect.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
                 for (int i = 0; i < params.length; i++){
-                    String param = (String) params[i];
-                    preparedStatement.setString(i+1, param);
+                    var param = (String) params[i];
+                    if (param instanceof String toInsert) preparedStatement.setString(i+1, toInsert);
+                    //else if (param instanceof ChessGame)
                 }
                 preparedStatement.executeUpdate();
+
+                var gameID = preparedStatement.getGeneratedKeys();
+                if (gameID.next()){
+                    return gameID.getInt(1); //return gameID
+                }
             }
         }
         catch (SQLException e){
             throw new ResponseException(String.format("can't update database: %s, %s", statement, e.getMessage()));
         }
+        throw new GeneralException("something bad happened");
     }
 
     private String[] createGameSchema = {
         """
-        CREATE TABLE IF NOT EXISTS games {
+        CREATE TABLE IF NOT EXISTS games (
         `gameID` int NOT NULL AUTO_INCREMENT,
         `whiteUsername` varChar(256) DEFAULT NULL,
         `blackUsername` varChar(256) DEFAULT NULL,

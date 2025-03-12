@@ -8,7 +8,7 @@ import java.util.Collection;
 public interface GameDAO {
     void clearGames() throws SQLException, DataAccessException;
     Collection<GameData> listGames() throws DataAccessException;
-    int createGame(String gameName) throws UnauthorizedException, BadRequestException;
+    int createGame(String gameName) throws DataAccessException, SQLException;
     boolean isColorAvailable(GameData game, ChessGame.TeamColor color);
     boolean findGame(int gameID);
     GameData getGame(Integer id);

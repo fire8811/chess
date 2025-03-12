@@ -178,4 +178,8 @@ public class MyServiceTests {
     @Test void testGetUsernameFromAuth() throws SQLException, DataAccessException {
         assertEquals("jonbob", authDatabase.getUsername("91a3d9f6-b426-4a0e-aaef-6af4590548c3"));
     }
+
+    @Test void testCreateGame() throws SQLException, DataAccessException {
+        gameDatabase.createGame("juego");
+    }
 }
