@@ -152,7 +152,7 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         catch (SQLException e){
             throw new ResponseException(String.format("can't update database: %s, %s", statement, e.getMessage()));
         }
-        throw new GeneralException("something bad happened");
+        return 0;
     }
 
     private String[] createGameSchema = {

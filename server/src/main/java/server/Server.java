@@ -19,10 +19,15 @@ public class Server {
     private UserService userService;
     private GameService gameService;
 
-    public Server(){
-        this.userDAO = new MemoryUserDAO();
-        this.gameDAO = new MemoryGameDAO();
-        this.authDAO = new MemoryAuthDAO();
+    public Server() {
+        try {
+            this.userDAO = new SqlUserDAO();
+            this.gameDAO = new SqlGameDAO();
+            this.authDAO = new SqlAuthDAO();
+        }
+        catch(Exception e) {
+            System.err.printf("something bad happened: %s%n", e.getMessage());
+        }
 
         clearService = new ClearService(authDAO, userDAO, gameDAO);
         userService = new UserService(authDAO, userDAO, gameDAO);

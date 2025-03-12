@@ -177,7 +177,8 @@ public class MyServiceTests {
 
     @Test void testClearSQL() throws SQLException, DataAccessException {
         authDatabase.clearAuths();
-        userDatabase.clearUsers();;
+        userDatabase.clearUsers();
+        gameDatabase.clearGames();
     }
 
     @Test void testTokenFinding() throws DataAccessException {
@@ -198,6 +199,6 @@ public class MyServiceTests {
     }
 
     @Test void testJoinGameSQL() throws DataAccessException {
-        gameDatabase.updateGame(2, ChessGame.TeamColor.WHITE, "jonbob");
+        gameDatabase.updateGame(1, ChessGame.TeamColor.WHITE, "jonbob");
     }
 }
