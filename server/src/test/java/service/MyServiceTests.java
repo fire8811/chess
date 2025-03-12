@@ -187,6 +187,9 @@ public class MyServiceTests {
     @Test void testListGames() throws DataAccessException {
         ArrayList<GameData> gamesList = (ArrayList<GameData>) gameDatabase.listGames();
         assertEquals(1, gamesList.size());
+    }
 
+    @Test void testJoinGame() throws DataAccessException {
+        gameDatabase.updateGame(2, ChessGame.TeamColor.WHITE, "jonbob");
     }
 }

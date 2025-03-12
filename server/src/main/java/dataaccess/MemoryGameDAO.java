@@ -12,9 +12,9 @@ public class MemoryGameDAO implements GameDAO{
     private int gameID = 1;
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
-    public GameData getGame(Integer id){
-        return games.get(id);
-    }
+//    public GameData getGame(Integer id){
+//        return games.get(id);
+//    }
 
     public Collection<GameData> listGames(){
         return games.values();

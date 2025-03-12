@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 
 import javax.xml.crypto.Data;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -59,10 +60,6 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return updateTable(command, gameName, chessGameJson); //create game and return gameID int
     }
 
-    public boolean isColorAvailable(GameData game, ChessGame.TeamColor color) {
-        return false;
-    }
-
     public boolean findGame(int gameID) throws DataAccessException { //checks to see if the gameID is in the database
         try (var goodConnection = DatabaseManager.getConnection()){
             var command = "SELECT 1 FROM games WHERE gameID=?";
@@ -80,20 +77,71 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return false; //no gameID found in table;
     }
 
-    public GameData getGame(Integer id) {
-        return null;
+//    public GameData getGame(Integer id) {
+//
+//    }
+    private String getCorrectStatement(ChessGame.TeamColor color){
+        if (color == ChessGame.TeamColor.WHITE){
+            return "SELECT whiteUsername FROM games WHERE gameID=?";
+        }
+        else {
+            return "SELECT blackUsername FROM games WHERE gameID=?";
+        }
+    }
+    //adds a user to a given team color in a given chess match if the match exists and the color is avaliable
+    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws DataAccessException, AlreadyTakenException {
+        if (color != ChessGame.TeamColor.BLACK && color != ChessGame.TeamColor.WHITE){ //check if color request is valid
+            throw new BadRequestException("bad request");
+        }
+        //retrieve teamColor and update with username if possible
+        try (var goodConnect = DatabaseManager.getConnection()) {
+            var statement = getCorrectStatement(color);
+
+            try (var preparedStatement = goodConnect.prepareStatement(statement)){
+
+                preparedStatement.setInt(1, gameID);
+                try (var result = preparedStatement.executeQuery()){ //retrieve teamColor status (null or taken)
+                    if (result.next()){
+                        String command;
+                        if(color == ChessGame.TeamColor.WHITE && result.getString("whiteUsername") == null){
+                            command = "UPDATE games SET whiteUsername=? WHERE gameID=?"; //update whiteUsername if free
+                        }
+                        else if (color == ChessGame.TeamColor.BLACK && result.getString("blackUsername") == null){
+                            command = "UPDATE games SET blackUsername=? WHERE gameID=?";
+                        }
+                        else {
+                            throw new AlreadyTakenException("color already taken");
+                        }
+                        insertUser(goodConnect, command, username, gameID);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("Error when trying to access data: %s", e.getMessage()));
+
+        }
     }
 
-    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws BadRequestException, AlreadyTakenException {
+    private void insertUser(Connection conn, String command, String username, int gameID) throws SQLException {
+        try (var preparedStatement = conn.prepareStatement(command)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setInt(2, gameID);
 
+            preparedStatement.executeUpdate();
+        }
+        catch (SQLException e){
+            throw new ResponseException(String.format("Error when trying to insert username into table: %s", e.getMessage()));
+        }
     }
+
 
     private int updateTable(String statement, Object... params) throws DataAccessException, SQLException {
         try (var goodConnect = DatabaseManager.getConnection()){
             try (var preparedStatement = goodConnect.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
                 for (int i = 0; i < params.length; i++){
-                    var param = (String) params[i];
+                    var param = params[i];
                     if (param instanceof String toInsert) preparedStatement.setString(i+1, toInsert);
+                    //else if (param instanceof Integer toInsert) preparedStatement.setInt(i+1, toInsert);
                     //else if (param instanceof ChessGame)
                 }
                 preparedStatement.executeUpdate();
