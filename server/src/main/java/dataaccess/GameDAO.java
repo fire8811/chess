@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface GameDAO {
     void clearGames();
-    Collection<GameData> getGamesFromMemory();
+    Collection<GameData> listGames() throws DataAccessException;
     int createGame(String gameName) throws UnauthorizedException, BadRequestException;
     boolean isColorAvailable(GameData game, ChessGame.TeamColor color);
     boolean findGame(int gameID);

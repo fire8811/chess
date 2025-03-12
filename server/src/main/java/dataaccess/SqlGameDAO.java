@@ -1,9 +1,12 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.GameData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,11 +16,36 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
     }
 
     public void clearGames() {
-
+        
     }
 
-    public Collection<GameData> getGamesFromMemory() {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        var result = new ArrayList<GameData>();
+        try (var goodConnect = DatabaseManager.getConnection()){
+            var statement = "SELECT * FROM games";
+            try (var preparedStatement = goodConnect.prepareStatement(statement)) {
+                try (var returnStatement = preparedStatement.executeQuery()){
+                    while (returnStatement.next()){
+                        result.add(readGame(returnStatement));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ResponseException(String.format("Error when accessing games database: %s", e.getMessage()));
+        }
+
+        return result;
+    }
+
+    private GameData readGame(ResultSet rs) throws SQLException {
+        var id = rs.getInt("gameID");
+        var whiteUsername = rs.getString("whiteUsername");
+        var blackUsername = rs.getString("blackUsername");
+        var gameName = rs.getString("gameName");
+        var json = rs.getString("chessGame");
+        var chessGame = new Gson().fromJson(json, ChessGame.class);
+
+        return new GameData(id, whiteUsername, blackUsername, gameName, chessGame);
     }
 
     public int createGame(String gameName) throws UnauthorizedException, BadRequestException {

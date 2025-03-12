@@ -19,6 +19,7 @@ public class MyServiceTests {
     static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
     final UserDAO userDatabase = new SqlUserDAO();
     final AuthDAO authDatabase = new SqlAuthDAO();
+    final GameDAO gameDatabase = new SqlGameDAO();
     static final AuthData authData = new AuthData(UUID.randomUUID().toString(), "jonbob");
 
     final ClearService clearService = new ClearService(AUTH_DAO, USER_DAO, GAME_DAO);

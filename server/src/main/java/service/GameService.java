@@ -18,7 +18,7 @@ public class GameService {
 //        String authToken = request.authToken();
 //        auth.authTokenExists(authToken); //verify authToken
 //
-//        return new ListResult(games.getGamesFromMemory());
+//        return new ListResult(games.listGames());
 //    }
 //
 //    public CreateResult createGame(CreateRequest request) throws UnauthorizedException, BadRequestException {

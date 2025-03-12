@@ -16,7 +16,7 @@ public class MemoryGameDAO implements GameDAO{
         return games.get(id);
     }
 
-    public Collection<GameData> getGamesFromMemory(){ //getter for testing
+    public Collection<GameData> listGames(){
         return games.values();
     }
 
