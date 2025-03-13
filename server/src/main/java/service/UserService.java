@@ -1,5 +1,8 @@
 package service;
 import dataaccess.*;
+import dataaccess.Exceptions.BadRequestException;
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.UsernameTakenException;
 import model.*;
 
 import java.sql.SQLException;
@@ -20,7 +23,7 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-    public void checkIfValidRegisterRequest(RegisterRequest request) throws BadRequestException{
+    public void checkIfValidRegisterRequest(RegisterRequest request) throws BadRequestException {
         if (request.username() == null || request.password() == null || request.email() == null){
             throw new BadRequestException("bad request");
         }

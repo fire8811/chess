@@ -1,9 +1,10 @@
 package dataaccess;
 
 
+import dataaccess.Exceptions.UnauthorizedException;
+import dataaccess.Exceptions.UsernameTakenException;
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 
 public class MemoryUserDAO implements UserDAO{
@@ -14,7 +15,7 @@ public class MemoryUserDAO implements UserDAO{
         return usersMemory;
     }
 
-    public boolean isUsernameFree(String username) throws UsernameTakenException{
+    public boolean isUsernameFree(String username) throws UsernameTakenException {
         if (usersMemory.containsKey(username) == false){
             return true;
         }

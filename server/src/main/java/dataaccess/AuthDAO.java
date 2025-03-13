@@ -1,12 +1,8 @@
 package dataaccess;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
+import dataaccess.Exceptions.DataAccessException;
 import model.AuthData;
-
-import javax.xml.crypto.Data;
 
 public interface AuthDAO {
     void clearAuths() throws SQLException, DataAccessException;

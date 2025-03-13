@@ -1,5 +1,8 @@
 package dataaccess;
 
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.ResponseException;
+
 import java.sql.SQLException;
 
 public interface DatabaseCreator {

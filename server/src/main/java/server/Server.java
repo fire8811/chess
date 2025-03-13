@@ -1,5 +1,6 @@
 package server;
 import dataaccess.*;
+import dataaccess.Exceptions.*;
 import model.*;
 import com.google.gson.Gson;
 import service.ClearService;
@@ -7,7 +8,6 @@ import service.GameService;
 import service.UserService;
 import spark.*;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 

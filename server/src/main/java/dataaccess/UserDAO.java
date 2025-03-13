@@ -1,10 +1,10 @@
 package dataaccess;
-import model.GameData;
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.UnauthorizedException;
+import dataaccess.Exceptions.UsernameTakenException;
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 public interface UserDAO {
     void clearUsers() throws DataAccessException, SQLException;

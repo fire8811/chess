@@ -1,16 +1,14 @@
 package dataaccess;
 
 import chess.ChessGame;
+import dataaccess.Exceptions.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 

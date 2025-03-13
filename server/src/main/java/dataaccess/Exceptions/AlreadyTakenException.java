@@ -1,6 +1,4 @@
-package dataaccess;
-
-import javax.xml.crypto.Data;
+package dataaccess.Exceptions;
 
 public class AlreadyTakenException extends DataAccessException {
   public AlreadyTakenException(String message) {

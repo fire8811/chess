@@ -1,10 +1,11 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.Exceptions.BadRequestException;
+import dataaccess.Exceptions.DataAccessException;
 import model.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class GameService {
     private final GameDAO games;

@@ -1,12 +1,11 @@
 package dataaccess;
 
-import chess.ChessPiece;
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.ResponseException;
+import dataaccess.Exceptions.UnauthorizedException;
 import model.AuthData;
-import org.eclipse.jetty.server.Response;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class SqlAuthDAO implements AuthDAO, DatabaseCreator {
     public SqlAuthDAO() throws SQLException, DataAccessException {

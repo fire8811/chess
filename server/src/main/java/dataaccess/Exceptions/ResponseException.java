@@ -1,4 +1,4 @@
-package dataaccess;
+package dataaccess.Exceptions;
 
 public class ResponseException extends RuntimeException {
     public ResponseException(String message) {

@@ -1,6 +1,9 @@
 package dataaccess;
 
 import chess.ChessGame;
+import dataaccess.Exceptions.AlreadyTakenException;
+import dataaccess.Exceptions.BadRequestException;
+import dataaccess.Exceptions.UnauthorizedException;
 import model.GameData;
 
 import java.util.Collection;

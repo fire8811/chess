@@ -2,13 +2,15 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.Exceptions.AlreadyTakenException;
+import dataaccess.Exceptions.BadRequestException;
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.ResponseException;
 import model.GameData;
 
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class SqlGameDAO implements GameDAO, DatabaseCreator {
     public SqlGameDAO() throws SQLException, DataAccessException {

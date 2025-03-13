@@ -1,11 +1,14 @@
 package dataaccess;
 
+import dataaccess.Exceptions.DataAccessException;
+import dataaccess.Exceptions.ResponseException;
+import dataaccess.Exceptions.UnauthorizedException;
+import dataaccess.Exceptions.UsernameTakenException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class SqlUserDAO implements UserDAO, DatabaseCreator{
     public SqlUserDAO() throws SQLException, DataAccessException {
