@@ -1,8 +1,8 @@
 package dataaccess;
 
-import dataaccess.Exceptions.DataAccessException;
-import dataaccess.Exceptions.ResponseException;
-import dataaccess.Exceptions.UnauthorizedException;
+import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.ResponseException;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 
 import java.sql.SQLException;

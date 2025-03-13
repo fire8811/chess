@@ -1,6 +1,6 @@
 package server;
 import dataaccess.*;
-import dataaccess.Exceptions.*;
+import dataaccess.exceptions.*;
 import model.*;
 import com.google.gson.Gson;
 import service.ClearService;

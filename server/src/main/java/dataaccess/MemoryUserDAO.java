@@ -1,8 +1,8 @@
 package dataaccess;
 
 
-import dataaccess.Exceptions.UnauthorizedException;
-import dataaccess.Exceptions.UsernameTakenException;
+import dataaccess.exceptions.UnauthorizedException;
+import dataaccess.exceptions.UsernameTakenException;
 import model.UserData;
 
 import java.util.HashMap;
