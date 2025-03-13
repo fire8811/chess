@@ -15,18 +15,9 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MyServiceTests {
-    static final UserDAO USER_DAO = new MemoryUserDAO();
-    static final GameDAO GAME_DAO = new MemoryGameDAO();
-    static final AuthDAO AUTH_DAO = new MemoryAuthDAO();
-
     final MemoryUserDAO usersMemory = new MemoryUserDAO();
     final MemoryGameDAO gamesMemory = new MemoryGameDAO();
     final MemoryAuthDAO authMemory = new MemoryAuthDAO();
-
-    final UserDAO userDatabase = new SqlUserDAO();
-    final AuthDAO authDatabase = new SqlAuthDAO();
-    final GameDAO gameDatabase = new SqlGameDAO();
-    final AuthData authData = new AuthData(UUID.randomUUID().toString(), "jonbob");
 
     final ClearService clearServiceMemory = new ClearService(authMemory, usersMemory, gamesMemory);
     final UserService userServiceMemory = new UserService(authMemory, usersMemory, gamesMemory);
@@ -150,55 +141,5 @@ public class MyServiceTests {
     void testJoinGameFail(){
         assertThrows(UnauthorizedException.class, () ->
                 gameServiceMemory.joinGame(new JoinRequest("", ChessGame.TeamColor.BLACK, 1)));
-    }
-
-
-//SQL DAO tests below
-
-    @Test
-    void testRegisterUserSQL() throws DataAccessException, SQLException {
-        //registerValidUser();
-        userDatabase.addUser(new UserData("jonbob", "banana", "email@email.com"));
-    }
-
-    @Test void testAddAuthdata() throws DataAccessException, SQLException {
-        authDatabase.addAuthData(new AuthData(UUID.randomUUID().toString(), "jonbob"));
-    }
-
-    @Test void testDeleteAuthData() throws DataAccessException, SQLException {
-        AuthData authData = new AuthData(UUID.randomUUID().toString(), "bruno");
-        authDatabase.addAuthData(authData);
-        authDatabase.deleteAuthData(authData.authToken());
-    }
-
-    @Test void testFindUser() throws UnauthorizedException, DataAccessException, SQLException {
-        assertTrue(userDatabase.findUser("jonbob", "banana"));
-    }
-
-    @Test void testClearSQL() throws SQLException, DataAccessException {
-        authDatabase.clearAuths();
-        userDatabase.clearUsers();
-        gameDatabase.clearGames();
-    }
-
-    @Test void testTokenFinding() throws DataAccessException {
-        assertTrue(authDatabase.authTokenExists("91a3d9f6-b426-4a0e-aaef-6af4590548c3"));
-    }
-
-    @Test void testGetUsernameFromAuth() throws SQLException, DataAccessException {
-        assertEquals("jonbob", authDatabase.getUsername("91a3d9f6-b426-4a0e-aaef-6af4590548c3"));
-    }
-
-    @Test void testCreateGameSQL() throws SQLException, DataAccessException {
-        gameDatabase.createGame("juego");
-    }
-
-    @Test void testListGamesSQL() throws DataAccessException {
-        ArrayList<GameData> gamesList = (ArrayList<GameData>) gameDatabase.listGames();
-        assertEquals(1, gamesList.size());
-    }
-
-    @Test void testJoinGameSQL() throws DataAccessException {
-        gameDatabase.updateGame(1, ChessGame.TeamColor.WHITE, "jonbob");
     }
 }

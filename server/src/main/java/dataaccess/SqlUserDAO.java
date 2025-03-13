@@ -32,7 +32,7 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
         throw new UnauthorizedException("unauthorized");
     }
 
-    public boolean isUsernameFree(String username) throws UsernameTakenException, SQLException, DataAccessException{
+    public boolean isUsernameFree(String username) throws DataAccessException{
         try(var goodConnection = DatabaseManager.getConnection()){
             var command = "SELECT 1 FROM users WHERE username = ?";
             try (var ps = goodConnection.prepareStatement(command)){
@@ -68,7 +68,7 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
         updateTable(command);
     }
 
-    public void updateTable(String statement, Object... params) throws DataAccessException, SQLException {
+    private void updateTable(String statement, Object... params) throws DataAccessException, SQLException {
         try (var goodConnect = DatabaseManager.getConnection()){
             try (var preparedStatement = goodConnect.prepareStatement(statement)){
                 for (var i = 0; i < params.length; i++){
