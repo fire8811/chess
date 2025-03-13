@@ -3,6 +3,7 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -17,11 +18,8 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
                 preparedStatement.setString(1, username);
 
                 try(var result = preparedStatement.executeQuery()){
-                    while(result.next()){
-                        String storedPassword = result.getString("password");
-                        if(BCrypt.checkpw(passwordClearText, storedPassword)){
-                            return true;
-                        }
+                    if (pleasePass(passwordClearText, result)) {
+                        return true;
                     }
                 }
             }
@@ -30,6 +28,17 @@ public class SqlUserDAO implements UserDAO, DatabaseCreator{
         }
 
         throw new UnauthorizedException("unauthorized");
+    }
+
+    private static boolean pleasePass(String passwordClearText, ResultSet result) throws SQLException {
+        while(result.next()){
+            String storedPassword = result.getString("password");
+
+            if(BCrypt.checkpw(passwordClearText, storedPassword)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isUsernameFree(String username) throws DataAccessException{
