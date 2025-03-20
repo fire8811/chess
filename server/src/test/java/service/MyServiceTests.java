@@ -3,10 +3,10 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedException;
-import dataaccess.exceptions.UsernameTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
+import exceptions.UsernameTakenException;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

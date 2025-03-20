@@ -1,9 +1,9 @@
 package dataaccess;
 
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.ResponseException;
-import dataaccess.exceptions.UnauthorizedException;
-import dataaccess.exceptions.UsernameTakenException;
+import exceptions.DataAccessException;
+import exceptions.ResponseException;
+import exceptions.UnauthorizedException;
+import exceptions.UsernameTakenException;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 

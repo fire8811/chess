@@ -1,8 +1,8 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
 import model.*;
 
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package dataaccess.exceptions;
+package exceptions;
 
 public class UsernameTakenException extends DataAccessException {
     public UsernameTakenException(String message) {
