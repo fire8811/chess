@@ -9,6 +9,7 @@ import model.RegisterResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.*;
 
 public class ServerFacade {
@@ -24,6 +25,9 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             //TODO: writebody
+            if (request != null) {
+                writeHttpBody(request, http); //write JSON body
+            }
             http.connect();
             //TODO: throw errors if connection not successful
 
@@ -32,6 +36,15 @@ public class ServerFacade {
             throw e;
         } catch (Exception e) {
             throw new ResponseException(e.getMessage());
+        }
+    }
+
+    private static void writeHttpBody(Object request, HttpURLConnection http) throws IOException {
+        http.addRequestProperty("Content-Type", "application/json");
+        String data = new Gson().toJson(request);
+
+        try (OutputStream reqBody = http.getOutputStream()){
+            reqBody.write(data.getBytes());
         }
     }
 
