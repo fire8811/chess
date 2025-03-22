@@ -91,7 +91,7 @@ public class ServerFacade {
 
     private static void writeHeader(Map<String, String> header, HttpURLConnection http) throws IOException {
         for (var entry: header.entrySet()){
-            http.setRequestProperty(entry.getKey(), entry.getValue());
+            http.addRequestProperty(entry.getKey(), entry.getValue());
         }
     }
 
