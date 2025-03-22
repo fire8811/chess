@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.HashMap;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -24,14 +25,14 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            //TODO: writebody
             if (request != null) {
                 writeHttpBody(request, http); //write JSON body
             }
-            http.connect();
-            //TODO: throw errors if connection not successful
 
-            return getObjectFromBody(http, responseClass);
+            http.connect();
+            throwIfNotSuccessful(http);
+            return readFromBody(http, responseClass);
+
         } catch (ResponseException e) {
             throw e;
         } catch (Exception e) {
@@ -48,7 +49,7 @@ public class ServerFacade {
         }
     }
 
-    private static <T> T getObjectFromBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
+    private static <T> T readFromBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T responseObject = null;
 
         if (http.getContentLength() > 0){
@@ -60,5 +61,26 @@ public class ServerFacade {
             }
         }
         return responseObject;
+    }
+
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException {
+        var status = http.getResponseCode();
+        if (!successCode(status)){
+            try(InputStream responseError = http.getErrorStream()){
+                if (responseError != null){
+                    var map = new Gson().fromJson(new InputStreamReader(responseError), HashMap.class);
+                    String message = map.get("message").toString();
+
+                    throw new ResponseException(message);
+                }
+
+                throw new ResponseException(status + ": something bad happened");
+            }
         }
+
+    }
+
+    private boolean successCode(int status){
+        return status/100 == 2;
+    }
 }
