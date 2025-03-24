@@ -27,6 +27,7 @@ public class PreLoginClient implements Client{
 
             return switch(cmd){
                 case "register" -> register(params);
+                case "login" -> login(params);
                 default -> help();
             };
 
@@ -44,6 +45,17 @@ public class PreLoginClient implements Client{
             return String.format("Welcome, %s", username);
         }
         throw new ResponseException("correct command is 'register <YOUR USERNAME> <YOUR PASSWORD> <YOUR EMAIL>");
+    }
+
+    public String login(String... params) throws ResponseException {
+        if (params.length > 1){
+            LoginResult result = server.loginUser(new LoginRequest(params[0], params[1]));
+            stageManager.setStage(ClientStage.POSTLOGIN);
+
+            String username = result.username();
+            return String.format("Welcome back, %s", username);
+        }
+        throw new ResponseException("unknown error when logging in");
     }
 
     public String help(){
