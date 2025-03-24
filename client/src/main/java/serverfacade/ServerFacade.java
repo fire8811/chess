@@ -16,6 +16,9 @@ import java.util.Map;
 public class ServerFacade {
     private final String serverUrl;
 
+    public ServerFacade() {
+        serverUrl = "http://localhost:8080";
+    }
     public ServerFacade(String url) {serverUrl = url;}
 
     public void clearServer(){
