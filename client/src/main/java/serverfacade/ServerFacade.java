@@ -110,7 +110,7 @@ public class ServerFacade {
     private static <T> T readFromBody(HttpURLConnection http, Class<T> responseClass) throws IOException {
         T responseObject = null;
 
-        if (http.getContentLength() > 0){
+        if (http.getContentLength() < 0){
             try (InputStream body = http.getInputStream()){
                 InputStreamReader reader = new InputStreamReader(body);
                 if(responseClass != null){

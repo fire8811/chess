@@ -42,7 +42,6 @@ public class Repl {
                 System.out.print(msg);
             }
         }
-        System.out.println();
     }
 
     public Client getCorrectClient(){
