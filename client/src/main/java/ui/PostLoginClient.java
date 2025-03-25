@@ -34,8 +34,8 @@ public class PostLoginClient implements Client {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                case "observer" -> observeGame(params);
-                case "quit", "q" -> "quit";
+                case "observe" -> observeGame(params);
+                case "quit" -> "quit";
                 default -> help();
 
             };
@@ -68,7 +68,7 @@ public class PostLoginClient implements Client {
     public String createGame(String...params) {
         CreateResult result = server.createGame(new CreateRequest(stageManager.getAuthToken(), params[0]));
         int gameID = result.gameID();
-        return String.format("Game %s created with game id %d", params[0], gameID);
+        return String.format("Game %s created", params[0], gameID);
     }
 
     public String listGames() {
@@ -89,6 +89,9 @@ public class PostLoginClient implements Client {
     }
 
     public String joinGame(String ... params)  {
+        if (params.length != 2){
+            throw new ResponseException("bad data given!");
+        }
         int gameToJoin = Integer.parseInt(params[0]);
         ChessGame.TeamColor teamToJoin;
         String teamAsString = "";
@@ -114,13 +117,16 @@ public class PostLoginClient implements Client {
             return "\n";
 
         } catch (Exception e) {
-            throw new RuntimeException("Invalid data provided!\n");
+            throw new ResponseException("Team is full or the game doesn't exist\n");
         }
 
     }
 
     public String observeGame(String ... params){
-        return "COMING SOON in phase 6!";
+        String gameNum = params[0];
+        System.out.print(String.format("OBSERVING GAME %s\n", gameNum));
+        new BoardUI(ChessGame.TeamColor.WHITE).drawBoard();
+        return "\n";
     }
 
 
