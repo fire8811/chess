@@ -36,9 +36,12 @@ public class ServerFacade {
         return this.sendRequest("POST", path, request, LoginResult.class, null);
     }
 
-    public void logoutUser(){
+    public void logoutUser(LogoutRequest request){
         var path = "/session";
-        this.sendRequest("DELETE", path, null, null, null);
+        Map<String, String> header = new HashMap<>();
+        header.put("authorization", request.authToken()); //place the authtoken in a request header instead of the body
+
+        this.sendRequest("DELETE", path, null, null, header);
     }
 
     public ListResult listGames(ListRequest request){

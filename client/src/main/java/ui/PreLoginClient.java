@@ -18,7 +18,6 @@ public class PreLoginClient implements Client{
         this.stageManager = stageManager;
     }
 
-    @Override
     public String eval(String input) {
         try {
             var tokens = input.toLowerCase().split(" ");
@@ -28,6 +27,7 @@ public class PreLoginClient implements Client{
             return switch(cmd){
                 case "register" -> register(params);
                 case "login" -> login(params);
+                case "quit", "q" -> "quit";
                 default -> help();
             };
 
@@ -42,6 +42,7 @@ public class PreLoginClient implements Client{
             stageManager.setStage(ClientStage.POSTLOGIN);
 
             String username = result.username();
+            stageManager.setAuthToken(result.authToken());
             return String.format("Welcome, %s", username);
         }
         throw new ResponseException("correct command is 'register <YOUR USERNAME> <YOUR PASSWORD> <YOUR EMAIL>");
@@ -53,6 +54,7 @@ public class PreLoginClient implements Client{
             stageManager.setStage(ClientStage.POSTLOGIN);
 
             String username = result.username();
+            stageManager.setAuthToken(result.authToken());
             return String.format("Welcome back, %s", username);
         }
         throw new ResponseException("unknown error when logging in");
