@@ -101,7 +101,7 @@ public class ServerFacadeTests {
 
         assertEquals(1, gameList.games().size());
     }
-    
+
     @Test
     public void listGamesFail(){
         assertThrows(ResponseException.class, () -> serverFacade.listGames(new ListRequest("badToken")));
