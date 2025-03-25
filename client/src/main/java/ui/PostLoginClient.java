@@ -108,7 +108,11 @@ public class PostLoginClient implements Client {
         try{
             JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
             //stageManager.setStage(ClientStage.IN_GAME);
-            return String.format("JOINED GAME %d AS %s", result.gameID(), teamAsString);
+
+            System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
+            new BoardUI(teamToJoin).drawBoard();
+            return "\n";
+
         } catch (Exception e) {
             throw new RuntimeException("Invalid data provided!\n");
         }
