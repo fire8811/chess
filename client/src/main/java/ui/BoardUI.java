@@ -79,25 +79,52 @@ public class BoardUI {
 
         for(int i = 0; i < blackPieces.length; i++){
             out.print(BLACK_PAWN);
-            isWhite = switchSquareColor(out, isWhite);
+            isWhite = switchSquareColor(out, isWhite); //alternate square colors
         }
 
         setLightGray(out);
         out.print(" 7 ");
+        out.print(RESET_BG_COLOR);
+        out.println();
+        //end of black pawn/pieces printing
 
-
-        for(int row = 8; row > 0; row--){
+        //print blank squares in middle of board
+        for (String rowLabel : new String[]{" 6 ", " 5 ", " 4 ", " 3 "}){
             setLightGray(out);
-            String rowLabel = String.format(" %d ", row+1);
+            out.print(rowLabel);
 
-            for (int col=0; col < 10; col++){
-                out.print(rowLabel);
+            if(!isWhite){
                 setWhite(out);
+                isWhite = true;
+            }
+            else{
+                setBlue(out);
+                isWhite = false;
             }
 
+            for (int col = 0; col < 8; col++){
+                out.print("   "); //blank square
+                isWhite = switchSquareColor(out, isWhite);
 
+            }
 
+            setLightGray(out);
+            out.print(rowLabel);
+            out.print(RESET_BG_COLOR);
+            out.println();
         }
+//        for(int row = 8; row > 0; row--){
+//            setLightGray(out);
+//            String rowLabel = String.format(" %d ", row+1);
+//
+//            for (int col=0; col < 10; col++){
+//                out.print(rowLabel);
+//                setWhite(out);
+//            }
+//
+//
+//
+//        }
     }
 
     private boolean switchSquareColor(PrintStream out, boolean isWhite){
