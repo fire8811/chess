@@ -14,11 +14,14 @@ public class BoardUI {
     private static final String[] WHITE_BASE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING,
             WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
+    private static final String[] BLACK_FROM_WHITE = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING,
+            BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK}; //black's pieces from white's perspective
+
     private static final String[] BLACK_BASE_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_KING, BLACK_QUEEN,
             BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
 
-
-    private static int BOARD_EDGE_SIZE = 10;
+    private static final String[] WHITE_FROM_BLACK = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_KING, WHITE_QUEEN,
+            WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK}; //white's pieces from black's perspective
 
     public BoardUI(ChessGame.TeamColor teamColor){
         this.teamColor = teamColor;
@@ -64,7 +67,7 @@ public class BoardUI {
         boolean isWhite = true;
 
         for (int i = 0; i < blackPieces.length; i++){
-            out.print(BLACK_BASE_PIECES[i]);
+            out.print(BLACK_FROM_WHITE[i]);
             isWhite = switchSquareColor(out, isWhite);
         }
 
@@ -95,14 +98,7 @@ public class BoardUI {
             setLightGray(out);
             out.print(rowLabel);
 
-            if(!isWhite){
-                setWhite(out);
-                isWhite = true;
-            }
-            else{
-                setBlue(out);
-                isWhite = false;
-            }
+            isWhite = getFirstSquareColor(out, isWhite);
 
             for (int col = 0; col < 8; col++){
                 out.print("   "); //blank square
@@ -153,6 +149,18 @@ public class BoardUI {
         out.println();
     }
 
+    private static boolean getFirstSquareColor(PrintStream out, boolean isWhite) {
+        if(!isWhite){
+            setWhite(out);
+            isWhite = true;
+        }
+        else{
+            setBlue(out);
+            isWhite = false;
+        }
+        return isWhite;
+    }
+
     private void drawRowsBlack(PrintStream out, String[] whitePieces, String[] blackPieces) {
         setLightGray(out); //print white base pieces
         out.print(" 1 ");
@@ -161,7 +169,7 @@ public class BoardUI {
         whitePieces(out);
 
         for (int i = 0; i < blackPieces.length; i++){
-            out.print(WHITE_BASE_PIECES[i]);
+            out.print(WHITE_FROM_BLACK[i]);
             isWhite = switchSquareColor(out, isWhite);
         }
 
@@ -193,14 +201,7 @@ public class BoardUI {
             setLightGray(out);
             out.print(rowLabel);
 
-            if(!isWhite){
-                setWhite(out);
-                isWhite = true;
-            }
-            else{
-                setBlue(out);
-                isWhite = false;
-            }
+            isWhite = getFirstSquareColor(out, isWhite);
 
             for (int col = 0; col < 8; col++){
                 out.print("   "); //blank square
