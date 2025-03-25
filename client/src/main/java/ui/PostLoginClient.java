@@ -32,6 +32,7 @@ public class PostLoginClient implements Client {
                 case "create" -> createGame(params);
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
+                case "observer" -> observeGame(params);
                 case "quit", "q" -> "quit";
                 default -> help();
 
@@ -103,8 +104,12 @@ public class PostLoginClient implements Client {
         }
 
         JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, gameToJoin));
-        stageManager.setStage(ClientStage.IN_GAME);
+        //stageManager.setStage(ClientStage.IN_GAME);
         return String.format("JOINED GAMEID %d AS %s", result.gameID(), teamAsString);
+    }
+
+    public String observeGame(String ... params){
+        return "COMING SOON in phase 6!";
     }
 
 
