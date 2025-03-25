@@ -56,7 +56,7 @@ public class BoardUI {
     }
 
     private void drawRowsWhite(PrintStream out, String[] whitePieces, String[] blackPieces){
-        setLightGray(out);
+        setLightGray(out); //print black base pieces
         out.print(" 8 ");
         setWhite(out);
         boolean isWhite = true;
@@ -113,18 +113,42 @@ public class BoardUI {
             out.print(RESET_BG_COLOR);
             out.println();
         }
-//        for(int row = 8; row > 0; row--){
-//            setLightGray(out);
-//            String rowLabel = String.format(" %d ", row+1);
-//
-//            for (int col=0; col < 10; col++){
-//                out.print(rowLabel);
-//                setWhite(out);
-//            }
-//
-//
-//
-//        }
+
+        //draw white pawns
+        setLightGray(out);
+        out.print(" 2 ");
+        setWhite(out);
+        isWhite = true;
+        whitePieces(out);
+
+        for(int i = 0; i < blackPieces.length; i++){
+            out.print(WHITE_PAWN);
+            isWhite = switchSquareColor(out, isWhite); //alternate square colors
+        }
+
+        setLightGray(out);
+        out.print(" 2 ");
+        out.print(RESET_BG_COLOR);
+        out.println();
+        //end of white pawn printing
+
+        //print white base pieces
+        setLightGray(out); //print black base pieces
+        out.print(" 1 ");
+        setBlue(out);
+        isWhite = false;
+
+        for (int i = 0; i < whitePieces.length; i++){
+            whitePieces(out); // change to white piece color
+            out.print(WHITE_BASE_PIECES[i]);
+            isWhite = switchSquareColor(out, isWhite);
+        }
+
+        setLightGray(out);
+        out.print(" 1 ");
+
+        out.print(RESET_BG_COLOR);
+        out.println();
     }
 
     private boolean switchSquareColor(PrintStream out, boolean isWhite){
@@ -157,7 +181,7 @@ public class BoardUI {
     }
 
     private static void whitePieces(PrintStream out){
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(SET_TEXT_COLOR_MAGENTA);
     }
 
     private static void blackVoid(PrintStream out){
