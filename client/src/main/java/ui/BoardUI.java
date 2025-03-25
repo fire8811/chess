@@ -9,12 +9,12 @@ import java.io.PrintStream;
 
 public class BoardUI {
     private static ChessGame.TeamColor teamColor;
-    private static String[] WHITE_POSITION_LETTERS = {"   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   "};
-    private static String[] BLACK_POSITION_LETTERS = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
-    private static String[] WHITE_BASE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING,
+    private static final String[] WHITE_POSITION_LETTERS = {"   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   "};
+    private static final  String[] BLACK_POSITION_LETTERS = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
+    private static final String[] WHITE_BASE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING,
             WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
-    private static String[] BLACK_BASE_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_KING, BLACK_QUEEN,
+    private static final String[] BLACK_BASE_PIECES = {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_KING, BLACK_QUEEN,
             BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
 
 
@@ -284,8 +284,4 @@ public class BoardUI {
         out.print(SET_TEXT_COLOR_MAGENTA);
     }
 
-    private static void blackVoid(PrintStream out){
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_BLACK);
-    }
 }

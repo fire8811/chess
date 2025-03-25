@@ -69,7 +69,8 @@ public class ServerFacade {
         return this.sendRequest("PUT", path, request, JoinResult.class, header);
     }
 
-    private <T> T sendRequest(String method, String path, Object request, Class<T> responseClass, Map<String, String> header) throws ResponseException {
+    private <T> T sendRequest(String method, String path, Object request, Class<T> responseClass,
+                              Map<String, String> header) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
