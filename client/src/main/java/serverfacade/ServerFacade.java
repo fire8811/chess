@@ -55,7 +55,10 @@ public class ServerFacade {
     public CreateResult createGame(CreateRequest request){
         var path = "/game";
 
-        return this.sendRequest("POST", path, request, CreateResult.class, null);
+        Map<String, String> header = new HashMap<>();
+        header.put("authorization", request.authToken());
+
+        return this.sendRequest("POST", path, request, CreateResult.class, header);
     }
 
     public JoinResult joinGame(JoinRequest request){
@@ -73,12 +76,12 @@ public class ServerFacade {
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            if (request != null) {
-                writeHttpBody(request, http); //write JSON body
-            }
-
             if (header != null) { //add header to request (usually for sending authTokens)
                 writeHeader(header, http);
+            }
+
+            if (request != null) {
+                writeHttpBody(request, http); //write JSON body
             }
 
             http.connect();
