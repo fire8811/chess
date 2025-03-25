@@ -10,7 +10,7 @@ import java.io.PrintStream;
 public class BoardUI {
     private static ChessGame.TeamColor teamColor;
     private static String[] WHITE_POSITION_LETTERS = {"   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   "};
-    private static String[] BLACK_POSITION_LETTERS = {"   ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", " h ", "   "};
+    private static String[] BLACK_POSITION_LETTERS = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
     private static String[] WHITE_BASE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING,
             WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
 
@@ -42,7 +42,9 @@ public class BoardUI {
     }
 
     private void drawBlackBoard(PrintStream out) {
-
+        drawColLabels(out, BLACK_POSITION_LETTERS);
+        drawRowsBlack(out, WHITE_BASE_PIECES, BLACK_BASE_PIECES);
+        drawColLabels(out, BLACK_POSITION_LETTERS);
     }
 
     private void drawColLabels(PrintStream out, String[] letters){
@@ -146,6 +148,104 @@ public class BoardUI {
 
         setLightGray(out);
         out.print(" 1 ");
+
+        out.print(RESET_BG_COLOR);
+        out.println();
+    }
+
+    private void drawRowsBlack(PrintStream out, String[] whitePieces, String[] blackPieces) {
+        setLightGray(out); //print white base pieces
+        out.print(" 1 ");
+        setWhite(out);
+        boolean isWhite = true;
+        whitePieces(out);
+
+        for (int i = 0; i < blackPieces.length; i++){
+            out.print(WHITE_BASE_PIECES[i]);
+            isWhite = switchSquareColor(out, isWhite);
+        }
+
+        setLightGray(out);
+        out.print(" 1 ");
+
+        out.print(RESET_BG_COLOR);
+        out.println();
+
+        setLightGray(out); //print out white pawns here
+        out.print(" 2 ");
+        setBlue(out);
+        isWhite = false;
+        whitePieces(out);
+
+        for(int i = 0; i < whitePieces.length; i++){
+            out.print(WHITE_PAWN);
+            isWhite = switchSquareColor(out, isWhite); //alternate square colors
+        }
+
+        setLightGray(out);
+        out.print(" 2 ");
+        out.print(RESET_BG_COLOR);
+        out.println();
+        //end of black pawn/pieces printing
+
+        //print blank squares in middle of board
+        for (String rowLabel : new String[]{" 3 ", " 4 ", " 5 ", " 6 "}){
+            setLightGray(out);
+            out.print(rowLabel);
+
+            if(!isWhite){
+                setWhite(out);
+                isWhite = true;
+            }
+            else{
+                setBlue(out);
+                isWhite = false;
+            }
+
+            for (int col = 0; col < 8; col++){
+                out.print("   "); //blank square
+                isWhite = switchSquareColor(out, isWhite);
+
+            }
+
+            setLightGray(out);
+            out.print(rowLabel);
+            out.print(RESET_BG_COLOR);
+            out.println();
+        }
+
+        //draw black pawns
+        setLightGray(out);
+        out.print(" 7 ");
+        setWhite(out);
+        isWhite = true;
+        blackPieces(out);
+
+        for(int i = 0; i < blackPieces.length; i++){
+            out.print(BLACK_PAWN);
+            isWhite = switchSquareColor(out, isWhite); //alternate square colors
+        }
+
+        setLightGray(out);
+        out.print(" 7 ");
+        out.print(RESET_BG_COLOR);
+        out.println();
+        //end of white pawn printing
+
+        //print white base pieces
+        setLightGray(out); //print black base pieces
+        out.print(" 8 ");
+        setBlue(out);
+        isWhite = false;
+
+        for (int i = 0; i < whitePieces.length; i++){
+            blackPieces(out); // change to white piece color
+            out.print(BLACK_BASE_PIECES[i]);
+            isWhite = switchSquareColor(out, isWhite);
+        }
+
+        setLightGray(out);
+        out.print(" 8 ");
 
         out.print(RESET_BG_COLOR);
         out.println();
