@@ -52,12 +52,10 @@ public class ServerFacade {
         return this.sendRequest("GET", path, null, ListResult.class, header);
     }
 
-    private CreateResult createGame(CreateRequest request){
+    public CreateResult createGame(CreateRequest request){
         var path = "/game";
-        Map<String, String> header = new HashMap<>();
-        header.put("authorization", request.authToken());
 
-        return this.sendRequest("POST", path, request, CreateResult.class, header);
+        return this.sendRequest("POST", path, request, CreateResult.class, null);
     }
 
     private JoinResult joinGame(JoinRequest request){

@@ -1,6 +1,8 @@
 package ui;
 
 import exceptions.ResponseException;
+import model.CreateRequest;
+import model.CreateResult;
 import model.LogoutRequest;
 import serverfacade.ServerFacade;
 
@@ -26,6 +28,7 @@ public class PostLoginClient implements Client {
 
             return switch(cmd){
                 case "logout" -> logout();
+                case "create" -> createGame(params);
                 case "quit", "q" -> "quit";
                 default -> help();
 
@@ -46,6 +49,12 @@ public class PostLoginClient implements Client {
                quit -hopefully you know what this means
                help -show this menu again
                """;
+    }
+
+    public String createGame(String...params) {
+        CreateResult result = server.createGame(new CreateRequest(stageManager.getAuthToken(), params[0]));
+        int gameID = result.gameID();
+        return String.format("Game %s created with game id %d", params[0], gameID);
     }
 
     public String logout() {

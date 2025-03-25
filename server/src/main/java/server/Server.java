@@ -116,9 +116,9 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException, SQLException {
-        String authToken = req.headers("authorization");
+        //String authToken = req.headers("authorization");
         CreateRequest createRequest = new Gson().fromJson(req.body(), model.CreateRequest.class); //add gameName from JSON body
-        createRequest = new CreateRequest(authToken, createRequest.gameName()); //add authToken from header to record
+        //createRequest = new CreateRequest(authToken, createRequest.gameName()); //add authToken from header to record
 
         CreateResult createResult = gameService.createGame(createRequest);
 
