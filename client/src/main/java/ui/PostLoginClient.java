@@ -6,6 +6,7 @@ import exceptions.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -13,6 +14,7 @@ public class PostLoginClient implements Client {
     private final ServerFacade server;
     private final String url;
     private final StageManager stageManager;
+    ArrayList<GameData> games;
 
     public PostLoginClient(String url, ServerFacade server, StageManager stageManager) {
         this.server = server;
@@ -71,7 +73,7 @@ public class PostLoginClient implements Client {
 
     public String listGames() {
         ListResult result = server.listGames(new ListRequest(stageManager.getAuthToken()));
-        Collection<GameData> games = result.games();
+        this.games = (ArrayList<GameData>) result.games();
 
         String returnString = "LIST OF GAMES\n";
         int i = 1;
@@ -79,7 +81,7 @@ public class PostLoginClient implements Client {
         for (GameData game: games){
             String whiteUsername = !(game.whiteUsername() == null) ? game.whiteUsername() : "<free to join>";
             String blackUsername = !(game.blackUsername() == null) ? game.blackUsername() : "<free to join>";
-            returnString += String.format("%d - NAME (ID): %s (%d) | WHITE: %s | BLACK: %s\n", i, game.gameName(), game.gameID(), whiteUsername, blackUsername);
+            returnString += String.format("%d - NAME: %s | WHITE: %s | BLACK: %s\n", i, game.gameName(), whiteUsername, blackUsername);
             i++;
         }
 
@@ -103,9 +105,14 @@ public class PostLoginClient implements Client {
             teamToJoin = null;
         }
 
-        JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, gameToJoin));
-        //stageManager.setStage(ClientStage.IN_GAME);
-        return String.format("JOINED GAMEID %d AS %s", result.gameID(), teamAsString);
+        try{
+            JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
+            //stageManager.setStage(ClientStage.IN_GAME);
+            return String.format("JOINED GAME %d AS %s", result.gameID(), teamAsString);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid data provided!\n");
+        }
+
     }
 
     public String observeGame(String ... params){
