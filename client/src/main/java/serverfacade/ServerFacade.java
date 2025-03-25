@@ -58,12 +58,12 @@ public class ServerFacade {
         return this.sendRequest("POST", path, request, CreateResult.class, null);
     }
 
-    private JoinResult joinGame(JoinRequest request){
+    public JoinResult joinGame(JoinRequest request){
         var path = "/game";
-        Map<String, String> header = new HashMap<>();
-        header.put("authorization", request.authToken());
+        //Map<String, String> header = new HashMap<>();
+        //header.put("authorization", request.authToken());
 
-        return this.sendRequest("PUT", path, request, JoinResult.class, header);
+        return this.sendRequest("PUT", path, request, JoinResult.class, null);
     }
 
     private <T> T sendRequest(String method, String path, Object request, Class<T> responseClass, Map<String, String> header) throws ResponseException {

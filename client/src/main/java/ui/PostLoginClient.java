@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+import exceptions.BadRequestException;
 import exceptions.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;
@@ -29,6 +31,7 @@ public class PostLoginClient implements Client {
                 case "logout" -> logout();
                 case "create" -> createGame(params);
                 case "list" -> listGames();
+                case "join" -> joinGame(params);
                 case "quit", "q" -> "quit";
                 default -> help();
 
@@ -75,11 +78,33 @@ public class PostLoginClient implements Client {
         for (GameData game: games){
             String whiteUsername = !(game.whiteUsername() == null) ? game.whiteUsername() : "<free to join>";
             String blackUsername = !(game.blackUsername() == null) ? game.blackUsername() : "<free to join>";
-            returnString += String.format("%d - NAME: %s | WHITE: %s | BLACK: %s\n", i, game.gameName(), whiteUsername, blackUsername);
+            returnString += String.format("%d - NAME (ID): %s (%d) | WHITE: %s | BLACK: %s\n", i, game.gameName(), game.gameID(), whiteUsername, blackUsername);
             i++;
         }
 
         return returnString;
+    }
+
+    public String joinGame(String ... params)  {
+        int gameToJoin = Integer.parseInt(params[0]);
+        ChessGame.TeamColor teamToJoin;
+        String teamAsString = "";
+
+        if (params[1].equalsIgnoreCase("WHITE") || params[1].equalsIgnoreCase("W")){
+            teamToJoin = ChessGame.TeamColor.WHITE;
+            teamAsString = "WHITE";
+        }
+        else if (params[1].equalsIgnoreCase("BLACK") || params[1].equalsIgnoreCase("B")) {
+            teamToJoin = ChessGame.TeamColor.BLACK;
+            teamAsString = "BLACK";
+        }
+        else {
+            teamToJoin = null;
+        }
+
+        JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, gameToJoin));
+        stageManager.setStage(ClientStage.IN_GAME);
+        return String.format("JOINED GAMEID %d AS %s", result.gameID(), teamAsString);
     }
 
 

@@ -127,9 +127,9 @@ public class Server {
     }
 
     private Object joinGame(Request req, Response res) throws DataAccessException, SQLException {
-        String authToken = req.headers("authorization");
+        //String authToken = req.headers("authorization");
         JoinRequest joinRequest = new Gson().fromJson(req.body(), model.JoinRequest.class);
-        joinRequest = new JoinRequest(authToken, joinRequest.playerColor(), joinRequest.gameID());
+        //joinRequest = new JoinRequest(authToken, joinRequest.playerColor(), joinRequest.gameID());
 
         JoinResult joinResult = gameService.joinGame(joinRequest);
         res.status(200);
