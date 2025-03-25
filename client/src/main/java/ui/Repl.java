@@ -24,7 +24,7 @@ public class Repl {
     }
 
     public void run(){
-        System.out.println("Welcome to chess! Register or sign in to begin.");
+        System.out.println(SET_TEXT_COLOR_BLUE + "Welcome to chess! Register or sign in to begin.");
         System.out.println("Type h or help to see possible commands");
 
         Scanner scanner = new Scanner(System.in);
@@ -42,6 +42,7 @@ public class Repl {
                 System.out.print(msg);
             }
         }
+        System.out.println();
     }
 
     public Client getCorrectClient(){
@@ -60,7 +61,7 @@ public class Repl {
     }
 
     public void printPrompt() {
-        System.out.println(">>> " + SET_TEXT_COLOR_GREEN);
+        System.out.print(SET_TEXT_COLOR_GREEN + ">>> ");
     }
 
 
