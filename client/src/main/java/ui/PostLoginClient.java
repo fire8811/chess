@@ -1,12 +1,11 @@
 package ui;
 
 import exceptions.ResponseException;
-import model.CreateRequest;
-import model.CreateResult;
-import model.LogoutRequest;
+import model.*;
 import serverfacade.ServerFacade;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class PostLoginClient implements Client {
     private final ServerFacade server;
@@ -29,6 +28,7 @@ public class PostLoginClient implements Client {
             return switch(cmd){
                 case "logout" -> logout();
                 case "create" -> createGame(params);
+                case "list" -> listGames();
                 case "quit", "q" -> "quit";
                 default -> help();
 
@@ -51,12 +51,6 @@ public class PostLoginClient implements Client {
                """;
     }
 
-    public String createGame(String...params) {
-        CreateResult result = server.createGame(new CreateRequest(stageManager.getAuthToken(), params[0]));
-        int gameID = result.gameID();
-        return String.format("Game %s created with game id %d", params[0], gameID);
-    }
-
     public String logout() {
         server.logoutUser(new LogoutRequest(stageManager.getAuthToken()));
 
@@ -64,5 +58,29 @@ public class PostLoginClient implements Client {
         stageManager.setStage(ClientStage.PRELOGIN);
         return "goodbye!";
     }
+
+    public String createGame(String...params) {
+        CreateResult result = server.createGame(new CreateRequest(stageManager.getAuthToken(), params[0]));
+        int gameID = result.gameID();
+        return String.format("Game %s created with game id %d", params[0], gameID);
+    }
+
+    public String listGames() {
+        ListResult result = server.listGames(new ListRequest(stageManager.getAuthToken()));
+        Collection<GameData> games = result.games();
+
+        String returnString = "LIST OF GAMES\n";
+        int i = 1;
+
+        for (GameData game: games){
+            String whiteUsername = !(game.whiteUsername() == null) ? game.whiteUsername() : "<free to join>";
+            String blackUsername = !(game.blackUsername() == null) ? game.blackUsername() : "<free to join>";
+            returnString += String.format("%d - NAME: %s | WHITE: %s | BLACK: %s\n", i, game.gameName(), whiteUsername, blackUsername);
+            i++;
+        }
+
+        return returnString;
+    }
+
 
 }
