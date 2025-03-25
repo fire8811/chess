@@ -94,23 +94,7 @@ public class BoardUI {
         //end of black pawn/pieces printing
 
         //print blank squares in middle of board
-        for (String rowLabel : new String[]{" 6 ", " 5 ", " 4 ", " 3 "}){
-            setLightGray(out);
-            out.print(rowLabel);
-
-            isWhite = getFirstSquareColor(out, isWhite);
-
-            for (int col = 0; col < 8; col++){
-                out.print("   "); //blank square
-                isWhite = switchSquareColor(out, isWhite);
-
-            }
-
-            setLightGray(out);
-            out.print(rowLabel);
-            out.print(RESET_BG_COLOR);
-            out.println();
-        }
+        printMiddleSquares(out, isWhite, new String[]{" 6 ", " 5 ", " 4 ", " 3 "});
 
         //draw white pawns
         setLightGray(out);
@@ -197,23 +181,7 @@ public class BoardUI {
         //end of black pawn/pieces printing
 
         //print blank squares in middle of board
-        for (String rowLabel : new String[]{" 3 ", " 4 ", " 5 ", " 6 "}){
-            setLightGray(out);
-            out.print(rowLabel);
-
-            isWhite = getFirstSquareColor(out, isWhite);
-
-            for (int col = 0; col < 8; col++){
-                out.print("   "); //blank square
-                isWhite = switchSquareColor(out, isWhite);
-
-            }
-
-            setLightGray(out);
-            out.print(rowLabel);
-            out.print(RESET_BG_COLOR);
-            out.println();
-        }
+        printMiddleSquares(out, isWhite, new String[]{" 3 ", " 4 ", " 5 ", " 6 "});
 
         //draw black pawns
         setLightGray(out);
@@ -250,6 +218,26 @@ public class BoardUI {
 
         out.print(RESET_BG_COLOR);
         out.println();
+    }
+
+    private void printMiddleSquares(PrintStream out, boolean isWhite, String[] rowLabels) {
+        for (String rowLabel : rowLabels){
+            setLightGray(out);
+            out.print(rowLabel);
+
+            isWhite = getFirstSquareColor(out, isWhite);
+
+            for (int col = 0; col < 8; col++){
+                out.print("   "); //blank square
+                isWhite = switchSquareColor(out, isWhite);
+
+            }
+
+            setLightGray(out);
+            out.print(rowLabel);
+            out.print(RESET_BG_COLOR);
+            out.println();
+        }
     }
 
     private boolean switchSquareColor(PrintStream out, boolean isWhite){
