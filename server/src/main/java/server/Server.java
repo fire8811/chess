@@ -7,6 +7,7 @@ import service.ClearService;
 import service.GameService;
 import service.UserService;
 import spark.*;
+import websocket.WebSocketHandler;
 
 import java.sql.SQLException;
 
@@ -18,6 +19,8 @@ public class Server {
     private ClearService clearService;
     private UserService userService;
     private GameService gameService;
+
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         try {
@@ -32,6 +35,7 @@ public class Server {
         clearService = new ClearService(authDAO, userDAO, gameDAO);
         userService = new UserService(authDAO, userDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
+        webSocketHandler = new WebSocketHandler();
     }
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -39,6 +43,8 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", webSocketHandler);
+
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
@@ -47,11 +53,6 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.exception(DataAccessException.class, this::exceptionHandler);
-
-
-
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
