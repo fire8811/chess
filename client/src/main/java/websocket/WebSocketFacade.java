@@ -36,6 +36,7 @@ public class WebSocketFacade {
         } catch (URISyntaxException | DeploymentException | IOException e) {
             throw new ResponseException(e.getMessage());
         }
-
     }
+
+
 }
