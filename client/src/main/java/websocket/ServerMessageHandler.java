@@ -2,6 +2,6 @@ package websocket;
 
 import websocket.messages.ServerMessage;
 
-public interface MessageHandler {
+public interface ServerMessageHandler {
     void displayMessage(ServerMessage message);
 }

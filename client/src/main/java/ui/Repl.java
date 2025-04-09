@@ -1,12 +1,15 @@
 package ui;
 
 import serverfacade.ServerFacade;
+import websocket.ServerMessageHandler;
+import websocket.messages.ServerMessage;
+
 import static ui.EscapeSequences.*;
 import java.util.Scanner;
 
 
 
-public class Repl {
+public class Repl implements ServerMessageHandler {
     private StageManager stageManager;
     private final ServerFacade server;
 
@@ -64,5 +67,8 @@ public class Repl {
         System.out.print(SET_TEXT_COLOR_GREEN + ">>> ");
     }
 
-
+    public void displayMessage(ServerMessage message){ //display websocket messages from server to UI
+        System.out.println(SET_TEXT_COLOR_MAGENTA + SET_TEXT_ITALIC + message.getMessage() + RESET_TEXT_ITALIC);
+        printPrompt();
+    }
 }
