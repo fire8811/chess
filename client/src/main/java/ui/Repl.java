@@ -22,7 +22,7 @@ public class Repl implements ServerMessageHandler {
         stageManager = new StageManager();
 
         preLoginClient = new PreLoginClient(url, server, stageManager);
-        postLoginClient = new PostLoginClient(url, server, stageManager);
+        postLoginClient = new PostLoginClient(url, server, stageManager, this);
         gamePlayClient = new GamePlayClient(url, server, stageManager);
     }
 

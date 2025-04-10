@@ -19,7 +19,6 @@ public class Server {
     private ClearService clearService;
     private UserService userService;
     private GameService gameService;
-
     private final WebSocketHandler webSocketHandler;
 
     public Server() {
@@ -29,14 +28,17 @@ public class Server {
             this.authDAO = new SqlAuthDAO();
         }
         catch(Exception e) {
-            System.err.printf("something bad happened: %s%n", e.getMessage());
+            System.err.printf("something bad happened: %s%n\n", e.getMessage());
         }
 
         clearService = new ClearService(authDAO, userDAO, gameDAO);
         userService = new UserService(authDAO, userDAO, gameDAO);
         gameService = new GameService(authDAO, gameDAO);
+
+
         webSocketHandler = new WebSocketHandler();
     }
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 

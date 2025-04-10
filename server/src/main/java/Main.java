@@ -1,5 +1,8 @@
 import chess.*;
+import exceptions.DataAccessException;
 import server.Server;
+
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {

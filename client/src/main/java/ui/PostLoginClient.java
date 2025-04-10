@@ -5,6 +5,8 @@ import exceptions.BadRequestException;
 import exceptions.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;
+import websocket.ServerMessageHandler;
+import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,11 +17,15 @@ public class PostLoginClient implements Client {
     private final String url;
     private final StageManager stageManager;
     ArrayList<GameData> games;
+    private final ServerMessageHandler serverMessageHandler;
+    private WebSocketFacade ws;
 
-    public PostLoginClient(String url, ServerFacade server, StageManager stageManager) {
+    public PostLoginClient(String url, ServerFacade server, StageManager stageManager,
+                           ServerMessageHandler serverMessageHandler) {
         this.server = server;
         this.url = url;
         this.stageManager = stageManager;
+        this.serverMessageHandler = serverMessageHandler;
     }
 
     @Override
@@ -110,13 +116,17 @@ public class PostLoginClient implements Client {
 
         try{
             JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
-            //stageManager.setStage(ClientStage.IN_GAME);
+            Thread.sleep(1000);
+            ws = new WebSocketFacade(url, serverMessageHandler);
+            //System.out.println("0");
+            ws.joinGame(gameToJoin, stageManager.getAuthToken());
 
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
             new BoardUI(teamToJoin).drawBoard();
             return "\n";
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new ResponseException("Team is full or the game doesn't exist\n");
         }
 
