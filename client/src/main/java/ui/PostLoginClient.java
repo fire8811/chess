@@ -118,7 +118,7 @@ public class PostLoginClient implements Client {
             JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
 
             ws = new WebSocketFacade(url, serverMessageHandler);
-            ws.joinGame(gameToJoin, stageManager.getAuthToken());
+            ws.joinGame(gameToJoin, stageManager.getAuthToken(), teamToJoin);
 
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
             new BoardUI(teamToJoin).drawBoard();
@@ -133,6 +133,10 @@ public class PostLoginClient implements Client {
 
     public String observeGame(String ... params){
         String gameNum = params[0];
+
+        ws = new WebSocketFacade(url, serverMessageHandler);
+        ws.observeGame(Integer.valueOf(gameNum), stageManager.getAuthToken());
+
         System.out.print(String.format("OBSERVING GAME %s\n", gameNum));
         new BoardUI(ChessGame.TeamColor.WHITE).drawBoard();
         return "\n";

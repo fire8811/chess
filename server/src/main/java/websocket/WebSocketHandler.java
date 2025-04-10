@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.SqlAuthDAO;
 import dataaccess.SqlUserDAO;
@@ -42,11 +43,43 @@ public class WebSocketHandler {
 
     public void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
         String username = getUsername(command.getAuthToken());
-        connections.add(username, session);
-        String message = String.format("%s joined the game", username);
 
+        if (command.getTeamColor() != null) {
+            joinGame(command, session, username); //if teamColor field is not null it means it is a request to join the game as a player
+        } else {
+            observeGame(command, session, username);
+        }
+
+
+    }
+
+    private void joinGame(UserGameCommand command, Session session, String username) throws SQLException, DataAccessException, IOException {
+        String teamColor;
+
+        if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
+            teamColor = "WHITE";
+        }
+        else {
+            teamColor = "BLACK";
+        }
+
+        connections.add(username, session);
+        String message = String.format("Player %s joined the game as %s", username, teamColor);
+
+        sendServerNotification(username, message);
+    }
+
+    private void observeGame(UserGameCommand command, Session session, String username) throws IOException {
+        String message = String.format("%s joined as an observer", username);
+
+        connections.add(username, session);
+        sendServerNotification(username, message);
+    }
+
+    private void sendServerNotification(String username, String message) throws IOException {
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         serverMessage.addMessage(message);
+
         connections.broadcast(username, serverMessage);
     }
 
