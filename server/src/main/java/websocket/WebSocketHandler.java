@@ -47,7 +47,7 @@ public class WebSocketHandler {
         if (command.getTeamColor() != null) {
             joinGame(command, session, username); //if teamColor field is not null it means it is a request to join the game as a player
         } else {
-            observeGame(command, session, username);
+            observeGame(session, username);
         }
 
 
@@ -69,7 +69,7 @@ public class WebSocketHandler {
         sendServerNotification(username, message);
     }
 
-    private void observeGame(UserGameCommand command, Session session, String username) throws IOException {
+    private void observeGame(Session session, String username) throws IOException {
         String message = String.format("%s joined as an observer", username);
 
         connections.add(username, session);
@@ -77,10 +77,12 @@ public class WebSocketHandler {
     }
 
     private void sendServerNotification(String username, String message) throws IOException {
-        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        serverMessage.addMessage(message);
+        //var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        //serverMessage.addMessage(message);
+        var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        System.out.println("Serialized: " + new Gson().toJson(notificationMessage));
 
-        connections.broadcast(username, serverMessage);
+        connections.broadcast(username, notificationMessage);
     }
 
     private String getUsername(String authToken) throws SQLException, DataAccessException {

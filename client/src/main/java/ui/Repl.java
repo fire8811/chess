@@ -2,6 +2,7 @@ package ui;
 
 import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import static ui.EscapeSequences.*;
@@ -67,7 +68,13 @@ public class Repl implements ServerMessageHandler {
         System.out.print(SET_TEXT_COLOR_GREEN + ">>> ");
     }
 
-    public void displayMessage(ServerMessage message){ //display websocket messages from server to UI
+    public void displayMessage(ServerMessage message){//display websocket messages from server to UI
+        switch (message.getServerMessageType()){
+            case NOTIFICATION -> printNotification((NotificationMessage) message);
+        }
+    }
+
+    private void printNotification(NotificationMessage message) {
         System.out.println(SET_TEXT_COLOR_MAGENTA + SET_TEXT_ITALIC + message.getMessage() + RESET_TEXT_ITALIC);
         printPrompt();
     }

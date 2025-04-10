@@ -33,6 +33,6 @@ public class GamePlayClient implements Client {
     }
 
     private String help() {
-        return "";
+        return "You are in the gameplay client. Update coming soon";
     }
 }

@@ -12,7 +12,7 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
-    private String message;
+    //private String message;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -28,13 +28,9 @@ public class ServerMessage {
         return this.serverMessageType;
     }
 
-    public void addMessage(String message){
-        this.message = message;
-    }
-
-    public String getMessage(){
-        return message;
-    }
+//    public void addMessage(String message){ this.message = message;}
+//
+//    public String getMessage(){ return message;}
 
     public String toString() {return new Gson().toJson(this);}
 

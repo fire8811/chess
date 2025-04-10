@@ -122,6 +122,8 @@ public class PostLoginClient implements Client {
 
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
             new BoardUI(teamToJoin).drawBoard();
+
+            stageManager.setStage(ClientStage.IN_GAME);
             return "\n";
 
         } catch (Exception e) {
