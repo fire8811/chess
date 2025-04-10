@@ -116,9 +116,8 @@ public class PostLoginClient implements Client {
 
         try{
             JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
-            Thread.sleep(1000);
+
             ws = new WebSocketFacade(url, serverMessageHandler);
-            //System.out.println("0");
             ws.joinGame(gameToJoin, stageManager.getAuthToken());
 
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));

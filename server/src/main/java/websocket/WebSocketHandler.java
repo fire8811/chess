@@ -36,15 +36,17 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
         switch(command.getCommandType()){
-            case CONNECT -> connect(command);
+            case CONNECT -> connect(command, session);
         }
     }
 
-    public void connect(UserGameCommand command) throws IOException, SQLException, DataAccessException {
+    public void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
         String username = getUsername(command.getAuthToken());
+        connections.add(username, session);
         String message = String.format("%s joined the game", username);
 
-        var serverMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+        serverMessage.addMessage(message);
         connections.broadcast(username, serverMessage);
     }
 
