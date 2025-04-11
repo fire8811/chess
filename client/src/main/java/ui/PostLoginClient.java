@@ -119,7 +119,7 @@ public class PostLoginClient implements Client {
 
             ws = new WebSocketFacade(url, serverMessageHandler);
             ws.joinGame(gameToJoin, stageManager.getAuthToken(), teamToJoin);
-
+            //TODO: load game here(?)
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
             new BoardUI(teamToJoin).drawBoard();
 

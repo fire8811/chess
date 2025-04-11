@@ -47,7 +47,7 @@ public class WebSocketHandler {
         if (command.getTeamColor() != null) {
             joinGame(command, session, username); //if teamColor field is not null it means it is a request to join the game as a player
         } else {
-            observeGame(session, username);
+            observeGame(command, session, username);
         }
 
 
@@ -55,6 +55,7 @@ public class WebSocketHandler {
 
     private void joinGame(UserGameCommand command, Session session, String username) throws SQLException, DataAccessException, IOException {
         String teamColor;
+        int gameID = command.getGameID();
 
         if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
             teamColor = "WHITE";
@@ -64,23 +65,32 @@ public class WebSocketHandler {
         }
 
         connections.add(username, session);
+        drawBoard(command, session);
+
         String message = String.format("Player %s joined the game as %s", username, teamColor);
 
         sendServerNotification(username, message);
     }
 
-    private void observeGame(Session session, String username) throws IOException {
+    private void observeGame(UserGameCommand command, Session session, String username) throws IOException {
         String message = String.format("%s joined as an observer", username);
 
         connections.add(username, session);
+        drawBoard(command, session);
         sendServerNotification(username, message);
+    }
+
+    private void drawBoard(UserGameCommand command, Session session){
+        int id = command.getGameID();
+
+
     }
 
     private void sendServerNotification(String username, String message) throws IOException {
         //var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         //serverMessage.addMessage(message);
         var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        System.out.println("Serialized: " + new Gson().toJson(notificationMessage));
+        //System.out.println("Serialized: " + new Gson().toJson(notificationMessage));
 
         connections.broadcast(username, notificationMessage);
     }
