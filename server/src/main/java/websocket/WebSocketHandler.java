@@ -1,5 +1,6 @@
 package websocket;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.SqlAuthDAO;
@@ -10,6 +11,7 @@ import exceptions.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import service.UserService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -21,11 +23,12 @@ import java.sql.SQLException;
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
-    private final SqlAuthDAO authDAO;
+    private GameManager gameManager = new GameManager();
+    private final UserService authenticator;
 
     public WebSocketHandler(){
         try{
-            this.authDAO = new SqlAuthDAO();
+            this.authenticator = new UserService();
         } catch(SQLException | DataAccessException e){
             throw new RuntimeException("authDAO failed to init becase: " + e.getMessage());
         }
@@ -76,14 +79,13 @@ public class WebSocketHandler {
         String message = String.format("%s joined as an observer", username);
 
         connections.add(username, session);
-        drawBoard(command, session);
+        sendBoard(command, session);
         sendServerNotification(username, message);
     }
 
-    private void drawBoard(UserGameCommand command, Session session){
+    private void sendBoard(UserGameCommand command, Session session){
         int id = command.getGameID();
-
-
+        ChessBoard board = .getBoard()
     }
 
     private void sendServerNotification(String username, String message) throws IOException {
@@ -96,6 +98,6 @@ public class WebSocketHandler {
     }
 
     private String getUsername(String authToken) throws SQLException, DataAccessException {
-        return authDAO.getUsername(authToken);
+        return authenticator.getUsername(authToken);
     }
 }

@@ -1,6 +1,7 @@
 package ui;
 
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import static ui.EscapeSequences.*;
 
@@ -8,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.io.PrintStream;
 
 public class BoardUI {
+    private ChessBoard board;
     private static ChessGame.TeamColor teamColor;
     private static final String[] WHITE_POSITION_LETTERS = {"   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   "};
     private static final  String[] BLACK_POSITION_LETTERS = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};

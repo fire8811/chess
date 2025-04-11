@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.*;
 import exceptions.BadRequestException;
 import exceptions.DataAccessException;
@@ -45,7 +46,7 @@ public class GameService {
             throw new BadRequestException("bad request");
         }
 
-        boolean gameExists = games.findGame(gameID);
+        boolean gameExists = games.gameExists(gameID);
         if (gameExists){
             games.updateGame(gameID, request.playerColor(), username);
         }
@@ -54,5 +55,9 @@ public class GameService {
         }
 
         return new JoinResult(request.playerColor(), gameID);
+    }
+
+    public ChessGame getGame(int gameID) throws DataAccessException {
+        return ((SqlGameDAO) games).getGame(gameID);
     }
 }

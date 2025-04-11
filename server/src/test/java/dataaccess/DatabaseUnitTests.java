@@ -129,11 +129,11 @@ public class DatabaseUnitTests {
 
     @Test void testFindGame() throws SQLException, DataAccessException {
         gameDatabase.createGame("game");
-        assertTrue(gameDatabase.findGame(1));
+        assertTrue(gameDatabase.gameExists(1));
     }
 
     @Test void testFindGameFail() throws DataAccessException {
-        assertFalse(gameDatabase.findGame(1));
+        assertFalse(gameDatabase.gameExists(1));
     }
 
     @Test void testListGames() throws SQLException, DataAccessException {

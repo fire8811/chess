@@ -63,4 +63,12 @@ public class UserService {
 
         auth.deleteAuthData(authToken);
     }
+
+    public boolean tokenExists(String authtoken) throws DataAccessException {
+        return auth.authTokenExists(authtoken);
+    }
+
+    public String getUsername(String authtoken) throws SQLException, DataAccessException {
+        return auth.getUsername(authtoken);
+    }
 }

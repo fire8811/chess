@@ -29,7 +29,7 @@ public class MemoryGameDAO implements GameDAO{
         return id;
     }
 
-    public boolean findGame(int gameID){
+    public boolean gameExists(int gameID){
         return games.containsKey(gameID);
     }
 

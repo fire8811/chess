@@ -59,7 +59,7 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return updateTable(command, gameName, chessGameJson); //create game and return gameID int
     }
 
-    public boolean findGame(int gameID) throws DataAccessException { //checks to see if the gameID is in the database
+    public boolean gameExists(int gameID) throws DataAccessException { //checks to see if the gameID is in the database
         try (var goodConnection = DatabaseManager.getConnection()){
             var command = "SELECT 1 FROM games WHERE gameID=?";
             try (var preparedStatement = goodConnection.prepareStatement(command)) {
@@ -163,6 +163,36 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
             throw new ResponseException(String.format("can't update database: %s, %s", statement, e.getMessage()));
         }
         return 0;
+    }
+
+    public ChessGame getGame(int gameID) throws DataAccessException {
+        //TODO: EXTRACT QUERY FROM HERE AND GAMEEIXSTS METHOD
+        gameExists(gameID);
+
+        ResultSet queryResult = getGameQueryResult(gameID);
+        try {
+            GameData gameData = readGame(queryResult); //get GameData because I can and then return the chessGame in gameData
+            return gameData.game();
+
+        } catch (SQLException e) {
+            System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+
+    private static ResultSet getGameQueryResult(int gameID) {
+        try (var goodConnection = DatabaseManager.getConnection()){
+            var command = "SELECT 1 FROM games WHERE gameID=?";
+            try (var preparedStatement = goodConnection.prepareStatement(command)) {
+                preparedStatement.setInt(1, gameID);
+                try (var retrieved = preparedStatement.executeQuery()) {
+                    if(retrieved.next()){
+                        return retrieved;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(String.format("Error when trying to find gameID in table:%s", e.getMessage()));
+        }
     }
 
     private String[] createGameSchema = {
