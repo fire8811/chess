@@ -171,12 +171,13 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
 
         ResultSet queryResult = getGameQueryResult(gameID);
         try {
-            GameData gameData = readGame(queryResult); //get GameData because I can and then return the chessGame in gameData
+            GameData gameData = readGame(queryResult); //get GameData to
             return gameData.game();
 
         } catch (SQLException e) {
             System.out.println("ERROR: " + e.getMessage());
         }
+        return null; //TODO: FIX RETURN AFTER ONLY PRINTING ERROR MESSAGE INSTEAD OF THROWING. WILL NEED TO LEARN HOW TO HANDLE ERRORS BETTER
     }
 
     private static ResultSet getGameQueryResult(int gameID) {
@@ -190,9 +191,10 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | DataAccessException e) {
             System.out.println(String.format("Error when trying to find gameID in table:%s", e.getMessage()));
         }
+        return null; //TODO: FIX THIS
     }
 
     private String[] createGameSchema = {

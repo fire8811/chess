@@ -17,8 +17,8 @@ public class Server {
     private GameDAO gameDAO;
     private AuthDAO authDAO;
     private ClearService clearService;
-    private UserService userService;
-    private GameService gameService;
+    public static UserService userService;
+    public static GameService gameService;
     private final WebSocketHandler webSocketHandler;
 
     public Server() {

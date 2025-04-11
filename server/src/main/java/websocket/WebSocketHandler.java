@@ -2,6 +2,7 @@ package websocket;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import server.Server;
 import com.google.gson.Gson;
 import dataaccess.SqlAuthDAO;
 import dataaccess.SqlUserDAO;
@@ -13,6 +14,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.UserService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -23,15 +25,9 @@ import java.sql.SQLException;
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
-    private GameManager gameManager = new GameManager();
-    private final UserService authenticator;
+    private GameManager gameManager;
 
     public WebSocketHandler(){
-        try{
-            this.authenticator = new UserService();
-        } catch(SQLException | DataAccessException e){
-            throw new RuntimeException("authDAO failed to init becase: " + e.getMessage());
-        }
     }
 
 
@@ -68,7 +64,8 @@ public class WebSocketHandler {
         }
 
         connections.add(username, session);
-        drawBoard(command, session);
+        gameManager = new GameManager(gameID);
+        sendGame(session);
 
         String message = String.format("Player %s joined the game as %s", username, teamColor);
 
@@ -79,13 +76,15 @@ public class WebSocketHandler {
         String message = String.format("%s joined as an observer", username);
 
         connections.add(username, session);
-        sendBoard(command, session);
+        sendGame(session);
         sendServerNotification(username, message);
     }
 
-    private void sendBoard(UserGameCommand command, Session session){
-        int id = command.getGameID();
-        ChessBoard board = .getBoard()
+    private void sendGame(Session session) throws IOException {
+        ChessGame game = gameManager.getGame();
+        var loadGameMessage = new LoadGameMessage(game);
+
+        connections.broadcastEveryone(loadGameMessage);
     }
 
     private void sendServerNotification(String username, String message) throws IOException {
@@ -98,6 +97,6 @@ public class WebSocketHandler {
     }
 
     private String getUsername(String authToken) throws SQLException, DataAccessException {
-        return authenticator.getUsername(authToken);
+        return Server.userService.getUsername(authToken);
     }
 }

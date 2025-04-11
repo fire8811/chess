@@ -1,26 +1,30 @@
 package websocket;
 
 import chess.*;
+import dataaccess.AuthDAO;
 import dataaccess.SqlAuthDAO;
 import dataaccess.SqlGameDAO;
 import exceptions.DataAccessException;
 import service.GameService;
+import server.Server;
+
+import java.sql.SQLException;
 
 public class GameManager {
     private ChessGame game;
-    private final GameService service;
+    private GameService gameService;
 
-    public GameManager(int gameID, GameService gameService){
+    public GameManager(int gameID){
         try {
-            game = gameService.g;
+            game = Server.gameService.getGame(gameID);
         } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            System.out.println("ERROR: " + e.getMessage());
         }
 
     }
 
-    public ChessGame getGame() {return game; }
     public ChessBoard getBoard() {return game.getBoard();}
+    public ChessGame getGame() {return game; }
 
     public void makeMove(String startPositionString, String endPositionString){
         ChessPosition startPosition = createChessPosition(startPositionString);
