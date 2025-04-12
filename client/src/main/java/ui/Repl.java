@@ -98,6 +98,7 @@ public class Repl implements ServerMessageHandler {
             default -> throw new IllegalStateException("CANNOT DRAW BOARD: STAGE IS " + stageManager.getStage());
         }
 
-        System.out.println("LOAD BOARD MESSAGE RECEIVED");
+        System.out.print("\n");
+        printPrompt();
     }
 }

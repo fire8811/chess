@@ -49,6 +49,7 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board){
         this.teamColor = teamColor;
         boardUI.updateBoard(board);
+        boardUI.drawBoard(teamColor);
         //TODO: redrawing board will have to be changed
     }
 

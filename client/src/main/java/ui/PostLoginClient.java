@@ -141,10 +141,9 @@ public class PostLoginClient implements Client {
         ws = new WebSocketFacade(url, serverMessageHandler);
         ws.observeGame(Integer.valueOf(gameNum), stageManager.getAuthToken());
 
-        System.out.print(String.format("OBSERVING GAME %s\n", gameNum));
         boardUI = new BoardUI();
 
-        return "\n";
+        return String.format("OBSERVING GAME %s\n", gameNum);
     }
 
 

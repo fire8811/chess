@@ -110,6 +110,10 @@ public class ChessBoard {
         }
      }
 
+     public ChessPiece[] getBoardRow(int index){
+        return board[index];
+     }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
