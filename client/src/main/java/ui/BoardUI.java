@@ -86,22 +86,22 @@ public class BoardUI {
         }
         switch (boardSquare.getPieceType()){
             case KING -> {
-               return teamColor == ChessGame.TeamColor.WHITE ? WHITE_KING : BLACK_KING;
+               return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KING : BLACK_KING;
             }
             case QUEEN -> {
-                return teamColor == ChessGame.TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+                return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
             }
             case BISHOP -> {
-                return teamColor == ChessGame.TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+                return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
             }
             case KNIGHT -> {
-                return teamColor == ChessGame.TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+                return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
             }
             case ROOK -> {
-                return teamColor == ChessGame.TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
+                return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
             }
             case PAWN -> {
-                return teamColor == ChessGame.TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
+                return boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
             }
             case null, default -> {
                 return " X ";
