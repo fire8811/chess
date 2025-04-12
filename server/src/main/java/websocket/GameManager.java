@@ -18,7 +18,7 @@ public class GameManager {
         try {
             game = Server.gameService.getGame(gameID);
         } catch (DataAccessException e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("ERROR GAMEMANAGER INIT: " + e.getMessage());
         }
 
     }

@@ -169,25 +169,18 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         //TODO: EXTRACT QUERY FROM HERE AND GAMEEIXSTS METHOD
         gameExists(gameID);
 
-        ResultSet queryResult = getGameQueryResult(gameID);
-        try {
-            GameData gameData = readGame(queryResult); //get GameData to
-            return gameData.game();
-
-        } catch (SQLException e) {
-            System.out.println("ERROR: " + e.getMessage());
-        }
-        return null; //TODO: FIX RETURN AFTER ONLY PRINTING ERROR MESSAGE INSTEAD OF THROWING. WILL NEED TO LEARN HOW TO HANDLE ERRORS BETTER
+        GameData gameData = getGameQueryResult(gameID);
+        return gameData.game();
     }
 
-    private static ResultSet getGameQueryResult(int gameID) {
+    private GameData getGameQueryResult(int gameID) {
         try (var goodConnection = DatabaseManager.getConnection()){
-            var command = "SELECT 1 FROM games WHERE gameID=?";
+            var command = "SELECT * FROM games WHERE gameID=?";
             try (var preparedStatement = goodConnection.prepareStatement(command)) {
                 preparedStatement.setInt(1, gameID);
                 try (var retrieved = preparedStatement.executeQuery()) {
                     if(retrieved.next()){
-                        return retrieved;
+                        return readGame(retrieved);
                     }
                 }
             }

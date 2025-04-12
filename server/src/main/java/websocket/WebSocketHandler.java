@@ -84,7 +84,7 @@ public class WebSocketHandler {
         ChessGame game = gameManager.getGame();
         var loadGameMessage = new LoadGameMessage(game);
 
-        connections.broadcastEveryone(loadGameMessage);
+        session.getRemote().sendString(new Gson().toJson(loadGameMessage));
     }
 
     private void sendServerNotification(String username, String message) throws IOException {

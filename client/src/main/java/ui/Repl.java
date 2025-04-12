@@ -2,6 +2,7 @@ package ui;
 
 import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -71,11 +72,16 @@ public class Repl implements ServerMessageHandler {
     public void displayMessage(ServerMessage message){//display websocket messages from server to UI
         switch (message.getServerMessageType()){
             case NOTIFICATION -> printNotification((NotificationMessage) message);
+            case LOAD_GAME -> printBoard((LoadGameMessage) message);
         }
     }
 
     private void printNotification(NotificationMessage message) {
         System.out.println(SET_TEXT_COLOR_MAGENTA + SET_TEXT_ITALIC + message.getMessage() + RESET_TEXT_ITALIC);
         printPrompt();
+    }
+
+    private void printBoard(LoadGameMessage message) {
+        System.out.println("LOAD BOARD MESSAGE RECEIVED");
     }
 }

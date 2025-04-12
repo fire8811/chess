@@ -3,10 +3,12 @@ package ui;
 import chess.ChessGame;
 import exceptions.ResponseException;
 import serverfacade.ServerFacade;
+import websocket.ServerMessageHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
 
-public class GamePlayClient implements Client {
+public class GamePlayClient implements Client, ServerMessageHandler {
     private final ServerFacade server;
     private final String url;
     private final  StageManager stageManager;
@@ -37,10 +39,15 @@ public class GamePlayClient implements Client {
     }
 
     private void makeMove() {
-        
+
     }
 
     private String help() {
         return "You are in the gameplay client. Update coming soon";
+    }
+
+    @Override
+    public void displayMessage(ServerMessage message) {
+        System.out.println("BoardMessage Received");
     }
 }
