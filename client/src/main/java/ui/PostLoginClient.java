@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exceptions.BadRequestException;
 import exceptions.ResponseException;
@@ -19,6 +20,7 @@ public class PostLoginClient implements Client {
     ArrayList<GameData> games;
     private final ServerMessageHandler serverMessageHandler;
     private WebSocketFacade ws;
+    private BoardUI boardUI;
 
     public PostLoginClient(String url, ServerFacade server, StageManager stageManager,
                            ServerMessageHandler serverMessageHandler) {
@@ -26,6 +28,7 @@ public class PostLoginClient implements Client {
         this.url = url;
         this.stageManager = stageManager;
         this.serverMessageHandler = serverMessageHandler;
+        boardUI = null;
     }
 
     @Override
@@ -119,9 +122,8 @@ public class PostLoginClient implements Client {
 
             ws = new WebSocketFacade(url, serverMessageHandler);
             ws.joinGame(gameToJoin, stageManager.getAuthToken(), teamToJoin);
-            //TODO: load game here(?)
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
-            new BoardUI(teamToJoin).drawBoard();
+            //new BoardUI().drawBoard(teamToJoin);
 
             stageManager.setStage(ClientStage.IN_GAME);
             return "\n";
@@ -140,9 +142,14 @@ public class PostLoginClient implements Client {
         ws.observeGame(Integer.valueOf(gameNum), stageManager.getAuthToken());
 
         System.out.print(String.format("OBSERVING GAME %s\n", gameNum));
-        new BoardUI(ChessGame.TeamColor.WHITE).drawBoard();
+        boardUI = new BoardUI();
+
         return "\n";
     }
 
 
+    public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board) {
+        boardUI.updateBoard(board);
+        boardUI.drawBoard(teamColor);
+    }
 }

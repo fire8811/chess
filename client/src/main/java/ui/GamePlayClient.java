@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exceptions.ResponseException;
 import serverfacade.ServerFacade;
@@ -13,12 +14,15 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     private final String url;
     private final  StageManager stageManager;
     private ChessGame chessGame;
+    private BoardUI boardUI;
+    ChessGame.TeamColor teamColor;
 
     public GamePlayClient(String url, ServerFacade server, StageManager stageManager) {
         this.server = server;
         this.url = url;
         this.stageManager = stageManager;
         chessGame = new ChessGame();
+        this.boardUI = new BoardUI();
     }
 
     @Override
@@ -40,6 +44,12 @@ public class GamePlayClient implements Client, ServerMessageHandler {
 
     private void makeMove() {
 
+    }
+
+    public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board){
+        this.teamColor = teamColor;
+        boardUI.updateBoard(board);
+        //TODO: redrawing board will have to be changed
     }
 
     private String help() {

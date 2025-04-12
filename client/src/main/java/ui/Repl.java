@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
 import websocket.messages.LoadGameMessage;
@@ -18,6 +20,7 @@ public class Repl implements ServerMessageHandler {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GamePlayClient gamePlayClient;
+    private final BoardUI boardUI;
 
     public Repl(String url) {
         server = new ServerFacade(url);
@@ -26,6 +29,8 @@ public class Repl implements ServerMessageHandler {
         preLoginClient = new PreLoginClient(url, server, stageManager);
         postLoginClient = new PostLoginClient(url, server, stageManager, this);
         gamePlayClient = new GamePlayClient(url, server, stageManager);
+
+        boardUI = new BoardUI();
     }
 
     public void run(){
@@ -82,6 +87,17 @@ public class Repl implements ServerMessageHandler {
     }
 
     private void printBoard(LoadGameMessage message) {
+        System.out.print(SET_TEXT_COLOR_MAGENTA + SET_TEXT_ITALIC + "CURRENT BOARD:\n" + RESET_TEXT_ITALIC);
+        switch (stageManager.getStage()){
+            case POSTLOGIN -> {
+                postLoginClient.drawBoard(message.getTeamColor(), message.getGame().getBoard());
+            }
+            case IN_GAME -> {
+                gamePlayClient.drawBoard(message.getTeamColor(), message.getGame().getBoard());
+            }
+            default -> throw new IllegalStateException("CANNOT DRAW BOARD: STAGE IS " + stageManager.getStage());
+        }
+
         System.out.println("LOAD BOARD MESSAGE RECEIVED");
     }
 }

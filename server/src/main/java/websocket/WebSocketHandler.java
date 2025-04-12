@@ -65,7 +65,7 @@ public class WebSocketHandler {
 
         connections.add(username, session);
         gameManager = new GameManager(gameID);
-        sendGame(session);
+        sendGame(session, command.getTeamColor());
 
         String message = String.format("Player %s joined the game as %s", username, teamColor);
 
@@ -76,13 +76,13 @@ public class WebSocketHandler {
         String message = String.format("%s joined as an observer", username);
 
         connections.add(username, session);
-        sendGame(session);
+        sendGame(session, ChessGame.TeamColor.WHITE);
         sendServerNotification(username, message);
     }
 
-    private void sendGame(Session session) throws IOException {
+    private void sendGame(Session session, ChessGame.TeamColor teamColor) throws IOException {
         ChessGame game = gameManager.getGame();
-        var loadGameMessage = new LoadGameMessage(game);
+        var loadGameMessage = new LoadGameMessage(game, teamColor);
 
         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
     }

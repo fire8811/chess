@@ -10,7 +10,7 @@ import java.io.PrintStream;
 
 public class BoardUI {
     private ChessBoard board;
-    private static ChessGame.TeamColor teamColor;
+
     private static final String[] WHITE_POSITION_LETTERS = {"   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   "};
     private static final  String[] BLACK_POSITION_LETTERS = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
     private static final String[] WHITE_BASE_PIECES = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING,
@@ -25,11 +25,11 @@ public class BoardUI {
     private static final String[] WHITE_FROM_BLACK = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_KING, WHITE_QUEEN,
             WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK}; //white's pieces from black's perspective
 
-    public BoardUI(ChessGame.TeamColor teamColor){
-        this.teamColor = teamColor;
+    public void updateBoard(ChessBoard board){
+        this.board = board;
     }
 
-    public void drawBoard(){
+    public void drawBoard(ChessGame.TeamColor teamColor){
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
         if (teamColor == ChessGame.TeamColor.WHITE){
