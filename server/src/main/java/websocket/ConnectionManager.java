@@ -1,5 +1,6 @@
 package websocket;
 
+import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -30,9 +31,26 @@ public class ConnectionManager {
             }
         }
 
+        cleanDeadConnections(deadConnections);
+    }
+
+    private void cleanDeadConnections(ArrayList<Connection> deadConnections) {
         //clean up connections left open
         for (var c: deadConnections){
             connections.remove(c.name);
         }
+    }
+
+    public void broadcastAll(ServerMessage message) throws IOException {
+        var deadConnections = new ArrayList<Connection>();
+        for (var c : connections.values()){
+            if (c.session.isOpen()){
+                c.send(message.toString());
+            } else{
+                deadConnections.add(c);
+            }
+        }
+
+        cleanDeadConnections(deadConnections);
     }
 }

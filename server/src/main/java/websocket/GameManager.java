@@ -27,17 +27,11 @@ public class GameManager {
     public ChessBoard getBoard() {return game.getBoard();}
     public ChessGame getGame() {return game; }
 
-    public void makeMove(String startPositionString, String endPositionString){
-        ChessPosition startPosition = createChessPosition(startPositionString);
-        ChessPosition endPosition = createChessPosition(endPositionString);
-
-        //TODO: figure out how to pass in pawn promotion pieces
-        ChessMove move = new ChessMove(startPosition, endPosition, null);
-
+    public void makeMove(ChessMove move){
         try {
             game.makeMove(move);
         } catch (InvalidMoveException e) {
-            System.out.println("GAME ERROR: " + e.getMessage());
+            throw new ResponseException("GAME ERROR: " + e.getMessage());
         }
 
     }

@@ -2,6 +2,7 @@ package websocket;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import org.eclipse.jetty.server.Authentication;
 import server.Server;
 import com.google.gson.Gson;
 import dataaccess.SqlAuthDAO;
@@ -40,15 +41,24 @@ public class WebSocketHandler {
         if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
             command = new Gson().fromJson(message, MakeMoveCommand.class);
         }
-
+        System.out.println("Incoming JSON: " + message);
         switch(command.getCommandType()){
             case CONNECT -> connect(command, session);
-            case MAKE_MOVE -> makeMove(command, session);
+            case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
         }
     }
 
-    private void makeMove(UserGameCommand command, Session session){
+    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+        try {
+            gameManager.makeMove(command.getMove());
 
+            LoadGameMessage message = new LoadGameMessage(gameManager.getGame(), command.getTeamColor());
+            connections.broadcastAll(message);
+
+        } catch (RuntimeException e) {
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
+        }
     }
 
     private void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
@@ -67,8 +77,7 @@ public class WebSocketHandler {
     }
 
     private void joinGame(UserGameCommand command, Session session, String username) throws SQLException, DataAccessException, IOException {
-        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
-        String teamColorString;
+        String teamColorString = "";
         int gameID = command.getGameID();
 
         try {
@@ -91,7 +100,7 @@ public class WebSocketHandler {
 
             sendGame(session, command.getTeamColor());
 
-            String message = String.format("Player %s joined the game as %s", username, teamColor);
+            String message = String.format("Player %s joined the game as %s", username, teamColorString);
 
             sendServerNotification(username, message);
 
@@ -112,6 +121,7 @@ public class WebSocketHandler {
     private void sendGame(Session session, ChessGame.TeamColor teamColor) throws IOException {
         ChessGame game = gameManager.getGame();
         var loadGameMessage = new LoadGameMessage(game, teamColor);
+
 
         session.getRemote().sendString(new Gson().toJson(loadGameMessage));
     }

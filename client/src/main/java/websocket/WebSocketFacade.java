@@ -1,6 +1,7 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
 import websocket.commands.MakeMoveCommand;
@@ -14,8 +15,6 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
 
 import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
 
@@ -92,15 +91,19 @@ public class WebSocketFacade extends Endpoint {
         try {
             var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
             command.setObserverStatus(true);
+
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             System.out.println("ERRRRROR: " + e.getMessage());
         }
     }
 
-    public void makeMove(String authToken, Integer gameID, String start, String end){
+    public void makeMove(String authToken, Integer gameID, ChessMove move, ChessGame.TeamColor teamColor){
+        System.out.println("WSF MAKE MOVE");
         try{
-            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, start, end);
+            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, move);
+            command.setTeamColor(teamColor);
+
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
         } catch (IOException e) {

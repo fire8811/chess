@@ -1,7 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
+import chess.*;
 import exceptions.ResponseException;
 import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
@@ -65,14 +64,24 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private String makeMove(String... params) {
-        String start = params[0];
-        String end = params[1];
+        ChessPosition start = convertToChessPosition(params[0]);
+        ChessPosition end = convertToChessPosition(params[1]);
 
+        ChessMove move = new ChessMove(start, end, null);//TODO: implement promotion peices
         String token = stageManager.getAuthToken();
         int gameID = stageManager.getGameID();
-        ws.makeMove(token, gameID, start, end);
 
-        return "making move";
+
+        ws.makeMove(token, gameID, move, teamColor);
+
+        return "";
+    }
+
+    private ChessPosition convertToChessPosition(String position) {
+        int row = Integer.parseInt(position.substring(1));
+        int col = position.charAt(0) - 'a' + 1;
+
+        return new ChessPosition(row, col);
     }
 
     public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board){
@@ -83,7 +92,7 @@ public class GamePlayClient implements Client, ServerMessageHandler {
 
     private String help() {
         return """
-               make move <position> <desired position>
+               move <position> <desired position>: self explanatory
                redraw: redraws the game board
                leave: self explanatory
                resign: for when all hope of victory is lost
