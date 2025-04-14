@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.*;
+import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.DataAccessException;
 import model.*;
@@ -59,5 +60,9 @@ public class GameService {
 
     public ChessGame getGame(int gameID) throws DataAccessException {
         return ((SqlGameDAO) games).getGame(gameID);
+    }
+
+    public String getUsernameByColor(ChessGame.TeamColor color, int gameID) throws SQLException, AlreadyTakenException {
+        return ((SqlGameDAO) games).getUsername(color, gameID);
     }
 }

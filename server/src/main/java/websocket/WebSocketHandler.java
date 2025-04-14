@@ -2,6 +2,7 @@ package websocket;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import org.eclipse.jetty.server.Authentication;
 import server.Server;
 import com.google.gson.Gson;
@@ -49,26 +50,30 @@ public class WebSocketHandler {
     }
 
     private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+
+
         try {
+            String username = getUsername(command.getAuthToken(), session);
+
+            if (!gameManager.verifyCorrectPiece(username, command.getMove())){
+                throw new RuntimeException("Can't make this move!");
+            }
+
             gameManager.makeMove(command.getMove());
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(gameManager.getGame(), command.getTeamColor());
             connections.broadcastAll(loadGameMessage);
 
-            String username = getUsername(command.getAuthToken(), session);
+
             String notification = String.format("%s moved %s to %s", username,
                     command.getStartString(), command.getEndString());
 
             sendServerNotification(username, notification);
 
 
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | SQLException | DataAccessException e) {
             var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
             session.getRemote().sendString(new Gson().toJson(errorMessage));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -93,12 +98,6 @@ public class WebSocketHandler {
 
         try {
             gameManager = new GameManager(gameID);
-
-
-    //        if (command.getUsername() == null){
-    //            SqlAuthDAO authDAO = new SqlAuthDAO();
-    //            authDAO.getUsername(command.getAuthToken());
-    //        }
 
             if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
                 teamColorString = "WHITE";

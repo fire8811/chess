@@ -2,7 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+
 /**
  * For a class that can manage a chess game, making moves on a board
  * <p>
@@ -53,6 +53,11 @@ public class ChessGame {
         }
     }
 
+    public TeamColor getMovePieceColor(ChessMove move) {
+        ChessPiece piece = gameBoard.getPiece(move.getStartPosition());
+        return piece.getTeamColor();
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -100,6 +105,7 @@ public class ChessGame {
         if (pieceToMove.getTeamColor() != whosTurn){
             throw new InvalidMoveException(); //attempted move when it's the other team's turn
         }
+
 
         if(validMoves.contains(move)){
             gameBoard.addPiece(move.getStartPosition(), null);

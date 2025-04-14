@@ -86,6 +86,26 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         }
     }
 
+    public String getUsername(ChessGame.TeamColor color, int gameID) throws SQLException, AlreadyTakenException { //returns the username of a given team color
+        try (var goodConnect = DatabaseManager.getConnection()) {
+            var statement = getCorrectStatement(color);
+
+            try (var preparedStatement = goodConnect.prepareStatement(statement)) {
+                preparedStatement.setInt(1, gameID);
+
+                try (var result = preparedStatement.executeQuery()){ //retrieve username stored for teamColor (null or taken)
+                    if (result.next()){
+                        return result.getString(1);
+
+                    }
+                }
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return null;
+    }
+
     //adds a user to a given team color in a given chess match if the match exists and the color is avaliable
     public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws DataAccessException, AlreadyTakenException {
         if (color != ChessGame.TeamColor.BLACK && color != ChessGame.TeamColor.WHITE){ //check if color request is valid
@@ -211,4 +231,6 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """
     };
+
+
 }
