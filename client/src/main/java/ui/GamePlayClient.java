@@ -72,7 +72,7 @@ public class GamePlayClient implements Client, ServerMessageHandler {
         int gameID = stageManager.getGameID();
 
 
-        ws.makeMove(token, gameID, move, teamColor);
+        ws.makeMove(token, gameID, move, teamColor, params[0], params[1]);
 
         return "";
     }

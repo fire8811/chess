@@ -142,6 +142,7 @@ public class PostLoginClient implements Client {
         String gameNum = params[0];
 
         ws.observeGame(Integer.valueOf(gameNum), stageManager.getAuthToken());
+        stageManager.setTeamColor(ChessGame.TeamColor.WHITE);
 
         boardUI = new BoardUI();
         stageManager.setGameID(Integer.valueOf(gameNum));

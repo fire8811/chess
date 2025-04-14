@@ -98,10 +98,11 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(String authToken, Integer gameID, ChessMove move, ChessGame.TeamColor teamColor){
+    public void makeMove(String authToken, Integer gameID, ChessMove move, ChessGame.TeamColor teamColor,
+                         String startMove, String endMove){
         System.out.println("WSF MAKE MOVE");
         try{
-            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, move);
+            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, move, startMove, endMove);
             command.setTeamColor(teamColor);
 
             this.session.getBasicRemote().sendText(new Gson().toJson(command));

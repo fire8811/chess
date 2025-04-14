@@ -52,12 +52,23 @@ public class WebSocketHandler {
         try {
             gameManager.makeMove(command.getMove());
 
-            LoadGameMessage message = new LoadGameMessage(gameManager.getGame(), command.getTeamColor());
-            connections.broadcastAll(message);
+            LoadGameMessage loadGameMessage = new LoadGameMessage(gameManager.getGame(), command.getTeamColor());
+            connections.broadcastAll(loadGameMessage);
+
+            String username = getUsername(command.getAuthToken(), session);
+            String notification = String.format("%s moved %s to %s", username,
+                    command.getStartString(), command.getEndString());
+
+            sendServerNotification(username, notification);
+
 
         } catch (RuntimeException e) {
             var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
             session.getRemote().sendString(new Gson().toJson(errorMessage));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
