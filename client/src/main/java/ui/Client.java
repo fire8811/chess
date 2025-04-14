@@ -1,6 +1,8 @@
 package ui;
 
+import websocket.WebSocketFacade;
+
 public interface Client {
-    public String eval(String input);
+    String eval(String input);
     //TODO: NOTIFY METHOD COULD GO HERE!
 }

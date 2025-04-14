@@ -29,6 +29,8 @@ public class PostLoginClient implements Client {
         this.stageManager = stageManager;
         this.serverMessageHandler = serverMessageHandler;
         boardUI = null;
+        WebSocketFacade.initWS(url, serverMessageHandler);
+        ws = WebSocketFacade.getWS();
     }
 
     @Override
@@ -120,11 +122,11 @@ public class PostLoginClient implements Client {
         try{
             JoinResult result = server.joinGame(new JoinRequest(stageManager.getAuthToken(), teamToJoin, this.games.get(gameToJoin-1).gameID()));
 
-            ws = new WebSocketFacade(url, serverMessageHandler);
             ws.joinGame(gameToJoin, stageManager.getAuthToken(), teamToJoin);
             System.out.print(String.format("JOINED GAME %d AS %s\n", result.gameID(), teamAsString));
             //new BoardUI().drawBoard(teamToJoin);
 
+            stageManager.setGameID(gameToJoin);
             stageManager.setStage(ClientStage.IN_GAME);
             return "\n";
 
@@ -138,10 +140,10 @@ public class PostLoginClient implements Client {
     public String observeGame(String ... params){
         String gameNum = params[0];
 
-        ws = new WebSocketFacade(url, serverMessageHandler);
         ws.observeGame(Integer.valueOf(gameNum), stageManager.getAuthToken());
 
         boardUI = new BoardUI();
+        stageManager.setGameID(Integer.valueOf(gameNum));
 
         return String.format("OBSERVING GAME %s\n", gameNum);
     }

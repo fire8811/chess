@@ -1,5 +1,7 @@
 package ui;
 
+import websocket.WebSocketFacade;
+
 enum ClientStage {
     PRELOGIN, POSTLOGIN, IN_GAME;
 }
@@ -7,6 +9,7 @@ enum ClientStage {
 public class StageManager {
     private ClientStage stage;
     private static String authToken;
+    private int gameID;
 
     public StageManager(){
         stage = ClientStage.PRELOGIN;
@@ -14,6 +17,14 @@ public class StageManager {
 
     public ClientStage getStage() {
         return stage;
+    }
+
+    public void setGameID(int gameID) {
+        this.gameID = gameID;
+    }
+
+    public int getGameID(){
+        return gameID;
     }
 
     public void setStage(ClientStage newStage){

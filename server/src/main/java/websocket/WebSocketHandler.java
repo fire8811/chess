@@ -42,9 +42,9 @@ public class WebSocketHandler {
 
     public void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
         String username = getUsername(command.getAuthToken());
-
-        if (command.getTeamColor() != null) {
-            joinGame(command, session, username); //if teamColor field is not null it means it is a request to join the game as a player
+        //TODO:
+        if (!command.getObserverStatus()) {
+            joinGame(command, session, username);
         } else {
             observeGame(command, session, username);
         }
@@ -53,18 +53,29 @@ public class WebSocketHandler {
     }
 
     private void joinGame(UserGameCommand command, Session session, String username) throws SQLException, DataAccessException, IOException {
-        String teamColor;
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
+        String teamColorString;
         int gameID = command.getGameID();
+        gameManager = new GameManager(gameID);
+
+//        if (command.getUsername() == null){
+//            SqlAuthDAO authDAO = new SqlAuthDAO();
+//            authDAO.getUsername(command.getAuthToken());
+//        }
+
+        if (command.getTeamColor() == null){
+
+        }
 
         if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
-            teamColor = "WHITE";
+            teamColorString = "WHITE";
         }
-        else {
-            teamColor = "BLACK";
+        else if (command.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            teamColorString = "BLACK";
         }
 
         connections.add(username, session);
-        gameManager = new GameManager(gameID);
+
         sendGame(session, command.getTeamColor());
 
         String message = String.format("Player %s joined the game as %s", username, teamColor);

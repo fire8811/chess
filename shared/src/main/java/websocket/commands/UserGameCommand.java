@@ -52,6 +52,8 @@ public class UserGameCommand {
 
     public ChessGame.TeamColor getTeamColor() {return teamColor;}
     public void setTeamColor(ChessGame.TeamColor teamColor) {this.teamColor = teamColor;}
+    public void setObserverStatus(boolean status) {this.observerStatus = status;}
+    public boolean getObserverStatus(){return this.observerStatus; }
 
 //    public boolean getObserverStatus() {return observerStatus;}
 //    public void setObserverStatusTrue() {observerStatus = true;}

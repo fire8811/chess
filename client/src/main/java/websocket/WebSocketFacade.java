@@ -3,6 +3,7 @@ package websocket;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.ResponseException;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -15,14 +16,17 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
+import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+
 //client side
 public class WebSocketFacade extends Endpoint {
     Session session;
     ServerMessageHandler serverMessageHandler;
+    private static WebSocketFacade ws;
     //I'll need to serialize and send the game command to the server which then deserializes it
     //I then need to be able to parse serverMessages received here and broadcast them
 
-    public WebSocketFacade(String url, ServerMessageHandler serverMessageHandler) throws ResponseException { //used in join or observe game
+    private WebSocketFacade(String url, ServerMessageHandler serverMessageHandler) throws ResponseException { //used in join or observe game
         try{
             url = url.replace("http", "ws");
             URI uri = new URI(url + "/ws");
@@ -55,6 +59,16 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
+    public static void initWS(String url, ServerMessageHandler handler){
+        if (ws == null){
+            ws = new WebSocketFacade(url, handler);
+        }
+    }
+
+    public static WebSocketFacade getWS(){
+        return ws;
+    }
+
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
@@ -72,9 +86,20 @@ public class WebSocketFacade extends Endpoint {
     public void observeGame(Integer gameID, String authToken) throws ResponseException {
         try {
             var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameID);
+            command.setObserverStatus(true);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
             System.out.println("ERRRRROR: " + e.getMessage());
+        }
+    }
+
+    public void makeMove(String authToken, Integer gameID, String start, String end){
+        try{
+            var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, start, end);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+
+        } catch (IOException e) {
+            System.out.println("makemoveerror: " + e.getMessage());
         }
     }
 }

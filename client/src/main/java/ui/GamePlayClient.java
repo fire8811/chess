@@ -5,6 +5,7 @@ import chess.ChessGame;
 import exceptions.ResponseException;
 import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
+import websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
 
 import java.util.Arrays;
@@ -16,6 +17,8 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     private ChessGame chessGame;
     private BoardUI boardUI;
     ChessGame.TeamColor teamColor;
+    private int gameID;
+    private WebSocketFacade ws;
 
     public GamePlayClient(String url, ServerFacade server, StageManager stageManager) {
         this.server = server;
@@ -23,6 +26,7 @@ public class GamePlayClient implements Client, ServerMessageHandler {
         this.stageManager = stageManager;
         chessGame = new ChessGame();
         this.boardUI = new BoardUI();
+        ws = WebSocketFacade.getWS();
     }
 
     @Override
@@ -33,8 +37,13 @@ public class GamePlayClient implements Client, ServerMessageHandler {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length); //parameters that follow the command (like a username)
 
             return switch(cmd){
+                case "redraw" -> redrawBoard();
+                case "leave" -> leaveGame();
+                case "move" -> makeMove(params);
+                case "resign" -> resign();
                 default -> help();
-                //TODO: add make move command
+                //TODO: add hihglight move command ALSO NOTE THAT OBSERVERS NEED TO BE IN THIS CLIENT. WILL ADD BOOLEAN TO PREVENT THEM FROM USING
+                //TODO: CERTAIN GAMEPLAY COMMANDS
             };
 
         } catch (ResponseException e){
@@ -42,20 +51,46 @@ public class GamePlayClient implements Client, ServerMessageHandler {
         }
     }
 
-    private void makeMove() {
+    private String redrawBoard() {
+        boardUI.drawBoard(teamColor);
+        return "";
+    }
 
+    private String leaveGame() {
+        return "bye";
+    }
+
+    private String resign() {
+        return "resign"; //spec says not to make player leave game. will prob need a gameState variable that is set to false to disable making moves
+    }
+
+    private String makeMove(String... params) {
+        String start = params[0];
+        String end = params[1];
+
+        String token = stageManager.getAuthToken();
+        int gameID = stageManager.getGameID();
+        ws.makeMove(token, gameID, start, end);
+
+        return "making move";
     }
 
     public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board){
         this.teamColor = teamColor;
         boardUI.updateBoard(board);
         boardUI.drawBoard(teamColor);
-        //TODO: redrawing board will have to be changed
     }
 
     private String help() {
-        return "You are in the gameplay client. Update coming soon";
+        return """
+               make move <position> <desired position>
+               redraw: redraws the game board
+               leave: self explanatory
+               resign: for when all hope of victory is lost
+               moves <position>: shows all legal moves of the selected chess piece
+               """;
     }
+
 
     @Override
     public void displayMessage(ServerMessage message) {
