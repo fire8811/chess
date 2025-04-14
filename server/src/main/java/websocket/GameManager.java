@@ -5,6 +5,7 @@ import dataaccess.AuthDAO;
 import dataaccess.SqlAuthDAO;
 import dataaccess.SqlGameDAO;
 import exceptions.DataAccessException;
+import exceptions.ResponseException;
 import service.GameService;
 import server.Server;
 
@@ -18,7 +19,7 @@ public class GameManager {
         try {
             game = Server.gameService.getGame(gameID);
         } catch (DataAccessException e) {
-            System.out.println("ERROR GAMEMANAGER INIT: " + e.getMessage());
+            throw new ResponseException("ERROR GAMEMANAGER INIT: " + e.getMessage());
         }
 
     }

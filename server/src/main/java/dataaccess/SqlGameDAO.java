@@ -8,6 +8,7 @@ import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameData;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -173,7 +174,7 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         return gameData.game();
     }
 
-    private GameData getGameQueryResult(int gameID) {
+    private GameData getGameQueryResult(int gameID) throws DataAccessException {
         try (var goodConnection = DatabaseManager.getConnection()){
             var command = "SELECT * FROM games WHERE gameID=?";
             try (var preparedStatement = goodConnection.prepareStatement(command)) {
@@ -182,12 +183,17 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
                     if(retrieved.next()){
                         return readGame(retrieved);
                     }
+                    else {
+                        throw new DataAccessException("No game found with ID: " + gameID);
+                    }
                 }
+
             }
         } catch (SQLException | DataAccessException e) {
             System.out.println(String.format("Error when trying to find gameID in table:%s", e.getMessage()));
+            throw new DataAccessException("Error when trying to find gameID in table: " + e.getMessage());
         }
-        return null; //TODO: FIX THIS
+
     }
 
     private String[] createGameSchema = {

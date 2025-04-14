@@ -13,7 +13,9 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.UserService;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -35,52 +37,68 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, SQLException, DataAccessException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
+        if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+            command = new Gson().fromJson(message, MakeMoveCommand.class);
+        }
+
         switch(command.getCommandType()){
             case CONNECT -> connect(command, session);
+            case MAKE_MOVE -> makeMove(command, session);
         }
     }
 
-    public void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
-        String username = getUsername(command.getAuthToken());
-        //TODO:
-        if (!command.getObserverStatus()) {
-            joinGame(command, session, username);
-        } else {
-            observeGame(command, session, username);
+    private void makeMove(UserGameCommand command, Session session){
+
+    }
+
+    private void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
+        try {
+            String username = getUsername(command.getAuthToken(), session);
+            //TODO:
+            if (!command.getObserverStatus()) {
+                joinGame(command, session, username);
+            } else {
+                observeGame(command, session, username);
+            }
+        } catch (SQLException | DataAccessException e) {
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
-
-
     }
 
     private void joinGame(UserGameCommand command, Session session, String username) throws SQLException, DataAccessException, IOException {
         ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
         String teamColorString;
         int gameID = command.getGameID();
-        gameManager = new GameManager(gameID);
 
-//        if (command.getUsername() == null){
-//            SqlAuthDAO authDAO = new SqlAuthDAO();
-//            authDAO.getUsername(command.getAuthToken());
-//        }
+        try {
+            gameManager = new GameManager(gameID);
 
-        if (command.getTeamColor() == null){
 
+    //        if (command.getUsername() == null){
+    //            SqlAuthDAO authDAO = new SqlAuthDAO();
+    //            authDAO.getUsername(command.getAuthToken());
+    //        }
+
+            if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
+                teamColorString = "WHITE";
+            }
+            else if (command.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                teamColorString = "BLACK";
+            }
+
+            connections.add(username, session);
+
+            sendGame(session, command.getTeamColor());
+
+            String message = String.format("Player %s joined the game as %s", username, teamColor);
+
+            sendServerNotification(username, message);
+
+        } catch (Exception e) {
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
-
-        if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
-            teamColorString = "WHITE";
-        }
-        else if (command.getTeamColor() == ChessGame.TeamColor.BLACK) {
-            teamColorString = "BLACK";
-        }
-
-        connections.add(username, session);
-
-        sendGame(session, command.getTeamColor());
-
-        String message = String.format("Player %s joined the game as %s", username, teamColor);
-
-        sendServerNotification(username, message);
     }
 
     private void observeGame(UserGameCommand command, Session session, String username) throws IOException {
@@ -107,7 +125,7 @@ public class WebSocketHandler {
         connections.broadcast(username, notificationMessage);
     }
 
-    private String getUsername(String authToken) throws SQLException, DataAccessException {
+    private String getUsername(String authToken, Session session) throws SQLException, DataAccessException, IOException {
         return Server.userService.getUsername(authToken);
     }
 }

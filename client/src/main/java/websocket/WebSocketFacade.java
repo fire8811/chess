@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import exceptions.ResponseException;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -48,6 +49,10 @@ public class WebSocketFacade extends Endpoint {
                         case LOAD_GAME -> {
                             LoadGameMessage loadGameMessage = new Gson().fromJson(s, LoadGameMessage.class);
                             serverMessageHandler.displayMessage(loadGameMessage); //goes directly to the REPL
+                        }
+                        case ERROR -> {
+                            ErrorMessage errorMessage = new Gson().fromJson(s, ErrorMessage.class);
+                            serverMessageHandler.displayMessage(errorMessage);
                         }
                     }
 
