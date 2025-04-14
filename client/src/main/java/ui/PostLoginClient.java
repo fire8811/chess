@@ -128,6 +128,7 @@ public class PostLoginClient implements Client {
 
             stageManager.setGameID(gameToJoin);
             stageManager.setStage(ClientStage.IN_GAME);
+            stageManager.setTeamColor(teamToJoin);
             return "\n";
 
         } catch (Exception e) {
