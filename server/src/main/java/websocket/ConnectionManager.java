@@ -62,16 +62,6 @@ public class ConnectionManager {
         return false;
     }
 
-    private Set<Connection> deleteUserName(String username, Set<Connection> usersInGame) {
-        for (Connection connection : usersInGame){
-            if (connection.getName().equals(username)){
-                usersInGame.remove(connection);
-            }
-        }
-
-        return usersInGame;
-    }
-
     private void cleanDeadConnections(ArrayList<Connection> deadConnections) {
         //clean up connections left open
         for (var c: deadConnections){

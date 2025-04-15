@@ -41,8 +41,6 @@ public class GamePlayClient implements Client, ServerMessageHandler {
                 case "move" -> makeMove(params);
                 case "resign" -> resign();
                 default -> help();
-                //TODO: add hihglight move command ALSO NOTE THAT OBSERVERS NEED TO BE IN THIS CLIENT. WILL ADD BOOLEAN TO PREVENT THEM FROM USING
-                //TODO: CERTAIN GAMEPLAY COMMANDS
             };
 
         } catch (ResponseException e){
@@ -64,14 +62,14 @@ public class GamePlayClient implements Client, ServerMessageHandler {
 
     private String resign() {
         ws.resign(stageManager.getAuthToken(), stageManager.getGameID());
-        return "You resigned!"; //spec says not to make player leave game. will prob need a gameState variable that is set to false to disable making moves
+        return "You resigned!";
     }
 
     private String makeMove(String... params) {
         ChessPosition start = convertToChessPosition(params[0]);
         ChessPosition end = convertToChessPosition(params[1]);
 
-        ChessMove move = new ChessMove(start, end, null);//TODO: implement promotion peices
+        ChessMove move = new ChessMove(start, end, null);
         String token = stageManager.getAuthToken();
         int gameID = stageManager.getGameID();
 

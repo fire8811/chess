@@ -14,16 +14,9 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class GameManager {
-    //private ChessGame game;
-    //private boolean gameOver = false;
-    //private String blackUsername;
-    //private String whiteUsername;
-
     private final GameService gameService;
 
-    public GameManager(int gameID, GameService gameService){
-        //System.out.println("IN GM CONSTRUCTOR, ID: " + this);
-        //System.out.println("MAKING NEW GAME: " + gameID);
+    public GameManager(GameService gameService){
         this.gameService = gameService;
     }
 

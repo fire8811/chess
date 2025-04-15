@@ -282,8 +282,6 @@ public class WebSocketTests {
         connectToGame(white, gameID, true, Set.of(), Set.of()); //connect white player
         connectToGame(black, gameID, true, Set.of(white), Set.of()); //connect black player
         connectToGame(observer, gameID, true,  Set.of(white, black), Set.of()); //connect observer
-
-        System.out.println("SETUP NORMAL GAME COMPLETE");
     }
 
     private WebsocketUser registerUser(String name, String password, String email) {

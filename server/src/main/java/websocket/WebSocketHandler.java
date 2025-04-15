@@ -163,16 +163,9 @@ public class WebSocketHandler { //create one instance of the class and always ma
         String teamColorString = "";
         int gameID = command.getGameID();
 
-
         try {
-
-            System.out.println("GAMEMANAGERLIST BEFORE: " + gameManagerList);
-            gameManagerList.putIfAbsent(gameID, new GameManager(gameID, gameService));
-            System.out.println("GM AFTER PUTIFABSENT: " + gameManagerList.get(gameID));
-            //System.out.println("gameManagerList keys: " + gameManagerList.keySet());
+            gameManagerList.putIfAbsent(gameID, new GameManager(gameService));
             var gameManager = gameManagerList.get(gameID);
-            System.out.println("GAMEMANAGERLIST AFTER: " + gameManagerList);
-            System.out.println("JOIN GM: " + gameManager);
 
             if (command.getTeamColor() == ChessGame.TeamColor.WHITE){
                 teamColorString = "WHITE";

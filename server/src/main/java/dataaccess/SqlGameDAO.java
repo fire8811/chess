@@ -90,7 +90,8 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         }
     }
 
-    public String getUsername(ChessGame.TeamColor color, int gameID) throws SQLException, AlreadyTakenException { //returns the username of a given team color
+    public String getUsername(ChessGame.TeamColor color, int gameID)
+            throws SQLException, AlreadyTakenException { //returns the username of a given team color
         try (var goodConnect = DatabaseManager.getConnection()) {
             var statement = getCorrectStatement(color);
 
@@ -257,7 +258,6 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
     }
 
     public ChessGame getGame(int gameID) throws DataAccessException {
-        //TODO: EXTRACT QUERY FROM HERE AND GAMEEIXSTS METHOD
         gameExists(gameID);
 
         GameData gameData = getGameQueryResult(gameID);
