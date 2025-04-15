@@ -17,7 +17,6 @@ public class GameManager {
     private boolean gameOver = false;
     private String blackUsername;
     private String whiteUsername;
-    private GameService gameService;
     private boolean whiteResigned = false;
     private boolean blackResigned = false;
 
@@ -89,5 +88,19 @@ public class GameManager {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public void leave(int gameID, String username) throws DataAccessException {
+       ChessGame.TeamColor teamColor;
+       if (Objects.equals(username, whiteUsername)) {
+           whiteUsername = null;
+           teamColor = ChessGame.TeamColor.WHITE;
+           Server.gameService.removeUser(gameID, teamColor);
+       }
+       else if (Objects.equals(username, blackUsername)) {
+           blackUsername = null;
+           teamColor = ChessGame.TeamColor.BLACK;
+           Server.gameService.removeUser(gameID, teamColor);
+       }
     }
 }

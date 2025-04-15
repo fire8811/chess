@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
-import static websocket.commands.UserGameCommand.CommandType.RESIGN;
+import static websocket.commands.UserGameCommand.CommandType.*;
 
 //client side
 public class WebSocketFacade extends Endpoint {
@@ -112,9 +111,24 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void resign(String authToken, int gameID) throws IOException {
-        var command = new UserGameCommand(RESIGN, authToken, gameID);
-        this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    public void resign(String authToken, int gameID)  {
+        try {
+            var command = new UserGameCommand(RESIGN, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
+        } catch (IOException e) {
+            System.out.print("Resign Error: " + e.getMessage());
+        }
+
+    }
+
+    public void leaveGame(String authToken, int gameID) {
+        try {
+            var command = new UserGameCommand(LEAVE, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+
+        } catch (IOException e){
+            System.out.print("Leave Error: " + e.getMessage());
+        }
     }
 }

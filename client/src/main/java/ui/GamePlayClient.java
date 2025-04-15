@@ -56,6 +56,9 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private String leaveGame() {
+        ws.leaveGame(stageManager.getAuthToken(), stageManager.getGameID());
+
+        stageManager.setStage(ClientStage.POSTLOGIN);
         return "bye";
     }
 

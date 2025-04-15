@@ -7,6 +7,7 @@ import exceptions.BadRequestException;
 import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameData;
+import server.Server;
 
 import javax.xml.crypto.Data;
 import java.sql.*;
@@ -139,10 +140,12 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
     }
 
     private String getCommandStatement(ResultSet result, ChessGame.TeamColor color) throws AlreadyTakenException, SQLException {
-        if(color == ChessGame.TeamColor.WHITE && result.getString("whiteUsername") == null){
+        if(color == ChessGame.TeamColor.WHITE && (result.getString("whiteUsername") == null
+                || Server.gameService.isLeaving())){
             return "UPDATE games SET whiteUsername=? WHERE gameID=?"; //update whiteUsername if free
         }
-        else if (color == ChessGame.TeamColor.BLACK && result.getString("blackUsername") == null){
+        else if (color == ChessGame.TeamColor.BLACK && (result.getString("blackUsername") == null
+                || Server.gameService.isLeaving())){
             return "UPDATE games SET blackUsername=? WHERE gameID=?";
         }
         else {
@@ -231,6 +234,4 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """
     };
-
-
 }

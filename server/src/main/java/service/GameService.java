@@ -12,6 +12,7 @@ import java.sql.SQLException;
 public class GameService {
     private final GameDAO games;
     private final AuthDAO auth;
+    private boolean isLeaving = false;
 
     public GameService(AuthDAO auth, GameDAO games){
         this.auth = auth;
@@ -38,6 +39,7 @@ public class GameService {
     }
 
     public JoinResult joinGame(JoinRequest request) throws DataAccessException, SQLException {
+        isLeaving = false;
         String authToken = request.authToken();
         auth.authTokenExists(authToken);
         String username = auth.getUsername(authToken);
@@ -64,5 +66,14 @@ public class GameService {
 
     public String getUsernameByColor(ChessGame.TeamColor color, int gameID) throws SQLException, AlreadyTakenException {
         return ((SqlGameDAO) games).getUsername(color, gameID);
+    }
+
+    public void removeUser(int gameID, ChessGame.TeamColor color) throws DataAccessException {
+        isLeaving = true;
+        ((SqlGameDAO) games).updateGame(gameID, color, null);
+    }
+
+    public boolean isLeaving() {
+        return isLeaving;
     }
 }

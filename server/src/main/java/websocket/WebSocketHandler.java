@@ -23,6 +23,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -48,6 +49,23 @@ public class WebSocketHandler {
             case CONNECT -> connect(command, session);
             case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
             case RESIGN -> resign(command, session);
+            case LEAVE -> leave(command, session);
+        }
+    }
+
+    private void leave(UserGameCommand command, Session session) throws IOException {
+        try {
+            String username = getUsername(command.getAuthToken(), session);
+            gameManager.leave(command.getGameID(), username);
+
+            sendServerNotification(username, String.format("%s left the game", username));
+            connections.remove(username);
+
+        } catch (SQLException | DataAccessException | IOException | ResponseException e) {
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                    "ERROR: " + e.getMessage() + "or an other issue");
+
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
     }
 
