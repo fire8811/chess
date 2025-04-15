@@ -43,7 +43,8 @@ public class MemoryGameDAO implements GameDAO{
         return false;
     }
 
-    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws BadRequestException, AlreadyTakenException {
+    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username)
+            throws BadRequestException, AlreadyTakenException {
         GameData game = games.get(gameID);
         if (color != ChessGame.TeamColor.BLACK && color != ChessGame.TeamColor.WHITE){
             throw new BadRequestException("bad request");

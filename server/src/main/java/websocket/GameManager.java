@@ -35,16 +35,16 @@ public class GameManager {
 
             if (isGameOver(gameID)){
                 System.out.println("GAME HAS ENDED");
-                throw new ResponseException("Game has ended!");
+                throw new InvalidMoveException("Game has ended!");
             }
 
             if (!verifyCorrectPiece(username, move, game, gameID)){
                 System.out.println("MAKEMOVE FAIL");
-                throw new RuntimeException("Can't make this move!");
+                throw new InvalidMoveException("Can't make this move!");
             }
 
             if (!verifyTurn(username, game, gameID)){
-                throw new RuntimeException("It's not your turn!");
+                throw new InvalidMoveException("It's not your turn!");
             };
 
 
@@ -99,7 +99,7 @@ public class GameManager {
         if (!isGameOver(gameID)){
             game.setGameOver(true);
             gameService.updateGameInDatabase(gameID, game);
-            
+
         } else {
             throw new ResponseException("Game has already ended!");
         }
@@ -115,12 +115,10 @@ public class GameManager {
        String blackUsername = getBlackUsername(gameID);
 
        if (Objects.equals(username, whiteUsername)) {
-           whiteUsername = null;
            teamColor = ChessGame.TeamColor.WHITE;
            gameService.removeUser(gameID, teamColor);
        }
        else if (Objects.equals(username, blackUsername)) {
-           blackUsername = null;
            teamColor = ChessGame.TeamColor.BLACK;
            gameService.removeUser(gameID, teamColor);
        }

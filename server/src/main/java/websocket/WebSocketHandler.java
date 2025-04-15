@@ -91,6 +91,7 @@ public class WebSocketHandler { //create one instance of the class and always ma
                 throw new ResponseException("Cannot resign as an observer!");
             }
 
+            gameManager.resign(command.getGameID());
             gameManagerList.put(command.getGameID(), gameManager);
 
             var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
@@ -145,7 +146,7 @@ public class WebSocketHandler { //create one instance of the class and always ma
     private void connect(UserGameCommand command, Session session) throws IOException, SQLException, DataAccessException {
         try {
             String username = getUsername(command.getAuthToken(), session);
-            //TODO:
+
             if (!command.getObserverStatus()) {
                 joinGame(command, session, username);
             } else {

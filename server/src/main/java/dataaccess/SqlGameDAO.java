@@ -111,7 +111,9 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
     }
 
     //adds a user to a given team color in a given chess match if the match exists and the color is avaliable
-    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username) throws DataAccessException, AlreadyTakenException {
+    public void updateGame(Integer gameID, ChessGame.TeamColor color, String username)
+            throws DataAccessException, AlreadyTakenException {
+
         if (color != ChessGame.TeamColor.BLACK && color != ChessGame.TeamColor.WHITE){ //check if color request is valid
             throw new BadRequestException("bad request");
         }
@@ -120,12 +122,40 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
             var statement = getCorrectStatement(color);
 
             try (var preparedStatement = goodConnect.prepareStatement(statement)){
-                executeQuery(preparedStatement, goodConnect, gameID, color, username);
+                executeQuery(preparedStatement, goodConnect, gameID, color, username, false );
             }
 
         } catch (SQLException e) {
             throw new ResponseException(String.format("Error when trying to access data: %s", e.getMessage()));
 
+        }
+    }
+
+    public void leaveGame(Integer gameID, ChessGame.TeamColor color, String username) throws BadRequestException {
+        if (color != ChessGame.TeamColor.BLACK && color != ChessGame.TeamColor.WHITE){ //check if color request is valid
+            throw new BadRequestException("bad request");
+        }
+        //retrieve teamColor and update with username if possible
+        try (var goodConnect = DatabaseManager.getConnection()) {
+            var statement = getCorrectStatement(color);
+
+            try (var preparedStatement = goodConnect.prepareStatement(statement)){
+                executeQuery(preparedStatement, goodConnect, gameID, color, username, true);
+            }
+
+        } catch (SQLException | DataAccessException e) {
+            throw new ResponseException(String.format("Error when trying to access data: %s", e.getMessage()));
+
+        }
+    }
+
+    private String getLeaveStatement(ResultSet result, ChessGame.TeamColor color) throws AlreadyTakenException, SQLException {
+        if (color == ChessGame.TeamColor.WHITE && (result.getString("whiteUsername") != null)) {
+            return "UPDATE games SET whiteUsername=? WHERE gameID=?"; //update whiteUsername if free
+        } else if (color == ChessGame.TeamColor.BLACK && (result.getString("blackUsername") != null)) {
+            return "UPDATE games SET blackUsername=? WHERE gameID=?";
+        } else {
+            throw new ResponseException("color isn't taken!");
         }
     }
 
@@ -168,25 +198,23 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
     }
 
     private void executeQuery(PreparedStatement preparedStatement, Connection goodConnect,
-                              Integer gameID, ChessGame.TeamColor color,
-                              String username) throws SQLException, AlreadyTakenException
-    {
+                              Integer gameID, ChessGame.TeamColor color, String username, boolean isLeaving)
+            throws SQLException, AlreadyTakenException {
+
         preparedStatement.setInt(1, gameID);
         try (var result = preparedStatement.executeQuery()){ //retrieve teamColor status (null or taken)
             if (result.next()){
-                String command = getCommandStatement(result, color);
+                String command = isLeaving ? getLeaveStatement(result, color) : getCommandStatement(result, color);
                 insertUser(goodConnect, command, username, gameID);
             }
         }
     }
 
     private String getCommandStatement(ResultSet result, ChessGame.TeamColor color) throws AlreadyTakenException, SQLException {
-        if(color == ChessGame.TeamColor.WHITE && (result.getString("whiteUsername") == null
-                || gameService.isLeaving())){
+        if(color == ChessGame.TeamColor.WHITE && (result.getString("whiteUsername") == null)){
             return "UPDATE games SET whiteUsername=? WHERE gameID=?"; //update whiteUsername if free
         }
-        else if (color == ChessGame.TeamColor.BLACK && (result.getString("blackUsername") == null
-                || gameService.isLeaving())){
+        else if (color == ChessGame.TeamColor.BLACK && (result.getString("blackUsername") == null)){
             return "UPDATE games SET blackUsername=? WHERE gameID=?";
         }
         else {
