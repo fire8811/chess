@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+import static websocket.commands.UserGameCommand.CommandType.RESIGN;
 
 //client side
 public class WebSocketFacade extends Endpoint {
@@ -100,7 +101,6 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String authToken, Integer gameID, ChessMove move, ChessGame.TeamColor teamColor,
                          String startMove, String endMove){
-        System.out.println("WSF MAKE MOVE");
         try{
             var command = new MakeMoveCommand(MAKE_MOVE, authToken, gameID, move, startMove, endMove);
             command.setTeamColor(teamColor);
@@ -110,5 +110,11 @@ public class WebSocketFacade extends Endpoint {
         } catch (IOException e) {
             System.out.println("makemoveerror: " + e.getMessage());
         }
+    }
+
+    public void resign(String authToken, int gameID) throws IOException {
+        var command = new UserGameCommand(RESIGN, authToken, gameID);
+        this.session.getBasicRemote().sendText(new Gson().toJson(command));
+
     }
 }

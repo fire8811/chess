@@ -3,6 +3,7 @@ package websocket;
 import chess.ChessBoard;
 import chess.ChessGame;
 import chess.InvalidMoveException;
+import exceptions.ResponseException;
 import org.eclipse.jetty.server.Authentication;
 import server.Server;
 import com.google.gson.Gson;
@@ -46,12 +47,42 @@ public class WebSocketHandler {
         switch(command.getCommandType()){
             case CONNECT -> connect(command, session);
             case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
+            case RESIGN -> resign(command, session);
+        }
+    }
+
+    private void resign(UserGameCommand command, Session session) throws IOException {
+        try{
+            String username = getUsername(command.getAuthToken(), session);
+
+            //resign attempt as observer throws error
+            if(!username.equals(gameManager.getWhiteUsername()) && (!username.equals(gameManager.getBlackUsername()))){
+                throw new ResponseException("Cannot resign as an observer!");
+            }
+
+            if(gameManager.isGameOver()){
+                throw new ResponseException("The game has already ended!");
+            }
+
+            if (username == gameManager.getWhiteUsername()){
+                gameManager.resign(ChessGame.TeamColor.WHITE);
+            }
+            else {
+                gameManager.resign(ChessGame.TeamColor.BLACK);
+            }
+
+            var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                    String.format("GAME OVER: %s resigned!", username));
+            connections.broadcastAll(notificationMessage);
+
+        } catch (SQLException | IOException | DataAccessException | ResponseException e) {
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " +
+                    e.getMessage());
+            session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
     }
 
     private void makeMove(MakeMoveCommand command, Session session) throws IOException {
-
-
         try {
             String username = getUsername(command.getAuthToken(), session);
 

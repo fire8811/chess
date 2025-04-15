@@ -60,7 +60,8 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private String resign() {
-        return "resign"; //spec says not to make player leave game. will prob need a gameState variable that is set to false to disable making moves
+        ws.resign(stageManager.getAuthToken(), stageManager.getGameID());
+        return "You resigned!"; //spec says not to make player leave game. will prob need a gameState variable that is set to false to disable making moves
     }
 
     private String makeMove(String... params) {
