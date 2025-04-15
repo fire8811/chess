@@ -146,6 +146,7 @@ public class PostLoginClient implements Client {
 
         boardUI = new BoardUI();
         stageManager.setGameID(Integer.valueOf(gameNum));
+        stageManager.setStage(ClientStage.IN_GAME);
 
         return String.format("OBSERVING GAME %s\n", gameNum);
     }
