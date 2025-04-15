@@ -76,4 +76,8 @@ public class GameService {
     public boolean isLeaving() {
         return isLeaving;
     }
+
+    public void updateGameInDatabase(int gameID, ChessGame game){
+        ((SqlGameDAO) games).updateChessGame(gameID, game);
+    }
 }

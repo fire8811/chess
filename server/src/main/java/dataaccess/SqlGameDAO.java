@@ -8,6 +8,7 @@ import exceptions.DataAccessException;
 import exceptions.ResponseException;
 import model.GameData;
 import server.Server;
+import service.GameService;
 
 import javax.xml.crypto.Data;
 import java.sql.*;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class SqlGameDAO implements GameDAO, DatabaseCreator {
+    private GameService gameService;
+
     public SqlGameDAO() throws SQLException, DataAccessException {
         configureDatabase(createGameSchema);
     }
@@ -126,6 +129,44 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
         }
     }
 
+    public void updateChessGame(int gameID, ChessGame chessGame){
+        try {
+            if (gameExists(gameID)){
+                var goodConnect = DatabaseManager.getConnection();
+                var statement = "SELECT chessGame FROM games WHERE gameID=?";
+
+                queryAndInsertGame(gameID, chessGame, goodConnect, statement);
+            } else {
+                System.out.println("Game with ID " + gameID + " does not exist.");
+            }
+        } catch (DataAccessException | SQLException e) {
+            System.out.println("Error when updating game to database: " + e.getMessage());
+        }
+    }
+
+    private void queryAndInsertGame(int gameID, ChessGame chessGame, Connection goodConnect, String statement) throws SQLException {
+        try (var preparedStatement = goodConnect.prepareStatement(statement)){
+            preparedStatement.setInt(1, gameID);
+            try(var result = preparedStatement.executeQuery()){
+                if (result.next()){
+                    String command = "UPDATE games SET chessGame=? WHERE gameID=?";
+                    insertGame(gameID, chessGame, goodConnect, command);
+                }
+            }
+        }
+    }
+
+    private void insertGame(int gameID, ChessGame chessGame, Connection conn, String command) throws SQLException {
+        var chessGameJSON = new Gson().toJson(chessGame); //serialize chessGame to JSON
+
+        try(var preparedStatememnt = conn.prepareStatement(command)){
+            preparedStatememnt.setString(1, chessGameJSON);
+            preparedStatememnt.setInt(2, gameID);
+
+            preparedStatememnt.executeUpdate();
+        }
+    }
+
     private void executeQuery(PreparedStatement preparedStatement, Connection goodConnect,
                               Integer gameID, ChessGame.TeamColor color,
                               String username) throws SQLException, AlreadyTakenException
@@ -141,11 +182,11 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
 
     private String getCommandStatement(ResultSet result, ChessGame.TeamColor color) throws AlreadyTakenException, SQLException {
         if(color == ChessGame.TeamColor.WHITE && (result.getString("whiteUsername") == null
-                || Server.gameService.isLeaving())){
+                || gameService.isLeaving())){
             return "UPDATE games SET whiteUsername=? WHERE gameID=?"; //update whiteUsername if free
         }
         else if (color == ChessGame.TeamColor.BLACK && (result.getString("blackUsername") == null
-                || Server.gameService.isLeaving())){
+                || gameService.isLeaving())){
             return "UPDATE games SET blackUsername=? WHERE gameID=?";
         }
         else {
@@ -159,12 +200,10 @@ public class SqlGameDAO implements GameDAO, DatabaseCreator {
             preparedStatement.setInt(2, gameID);
 
             preparedStatement.executeUpdate();
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new ResponseException(String.format("Error when trying to insert username into table: %s", e.getMessage()));
         }
     }
-
 
     private int updateTable(String statement, Object... params) throws DataAccessException, SQLException { //used for adding new games to table
         try (var goodConnect = DatabaseManager.getConnection()){

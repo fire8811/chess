@@ -12,6 +12,7 @@ import java.util.Collection;
 public class ChessGame {
     private TeamColor whosTurn;
     private ChessBoard gameBoard;
+    private boolean gameOver = false;
 
     public ChessGame() {
         this.whosTurn = TeamColor.WHITE;
@@ -58,6 +59,14 @@ public class ChessGame {
         return piece.getTeamColor();
     }
 
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -95,19 +104,26 @@ public class ChessGame {
      */
 
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        System.out.println("1");
+        System.out.println(whosTurn);
+        System.out.println(gameBoard);
+
         if (!squareNotEmpty(gameBoard, move.getStartPosition())){ //check if starting square has a piece
             throw new InvalidMoveException(); //if not throw exception
         }
-
+        System.out.println("2");
         ChessPiece pieceToMove = gameBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        System.out.println(pieceToMove.getTeamColor());
+        System.out.println("3");
 
         if (pieceToMove.getTeamColor() != whosTurn){
-            throw new InvalidMoveException(); //attempted move when it's the other team's turn
+            throw new InvalidMoveException("Not your turn!"); //attempted move when it's the other team's turn
         }
 
-
+        System.out.println("4");
         if(validMoves.contains(move)){
+            System.out.println("5");
             gameBoard.addPiece(move.getStartPosition(), null);
             //valid move, execute move below
             if (move.getPromotionPiece() != null){
@@ -117,6 +133,7 @@ public class ChessGame {
             else {
                 gameBoard.addPiece(move.getEndPosition(), pieceToMove);
             }
+            System.out.println("6");
             isInCheck(getOppositeTeam(whosTurn));
             isInCheckmate(getOppositeTeam(whosTurn));
             isInStalemate(getOppositeTeam(whosTurn));
@@ -125,7 +142,7 @@ public class ChessGame {
             switchTeamTurn(whosTurn);
 
         } else{
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Invalid move!");
         }
     }
 

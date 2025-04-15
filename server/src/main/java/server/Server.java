@@ -17,8 +17,8 @@ public class Server {
     private GameDAO gameDAO;
     private AuthDAO authDAO;
     private ClearService clearService;
-    public static UserService userService;
-    public static GameService gameService;
+    private UserService userService;
+    private GameService gameService;
     private final WebSocketHandler webSocketHandler;
 
     public Server() {
@@ -36,7 +36,7 @@ public class Server {
         gameService = new GameService(authDAO, gameDAO);
 
 
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(gameService, userService);
     }
 
     public int run(int desiredPort) {
