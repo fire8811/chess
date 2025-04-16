@@ -62,6 +62,24 @@ public class BoardUI {
         }
 
         Collection<ChessMove> moves = game.validMoves(position);
+
+        if (teamColor == ChessGame.TeamColor.BLACK){ //change to mirrored chessboard coordinate if black to print on board correctly
+            Collection<ChessMove> mirroredMoves = new ArrayList<>();
+
+            for (ChessMove move : moves){
+                int mirroredStartCol = Math.abs(move.getStartPosition().getColumn()- 9);
+                ChessPosition mirroredStart = new ChessPosition(move.getStartPosition().getRow(), mirroredStartCol);
+
+                int mirroredEndCol = Math.abs(move.getEndPosition().getColumn() - 9);
+                ChessPosition mirroredEnd = new ChessPosition(move.getEndPosition().getRow(), mirroredEndCol);
+
+                ChessMove mirroredMove = new ChessMove(mirroredStart, mirroredEnd, null);
+                mirroredMoves.add(mirroredMove);
+            }
+
+            moves.clear();
+            moves.addAll(mirroredMoves);
+        }
         drawBoard(teamColor, new ArrayList<>(moves));
 
 
@@ -81,7 +99,7 @@ public class BoardUI {
 
             String square = getSquare(boardSquare); //retrievs proper square to print, either empty or with a chesspiece
 
-            if (highlightMoves != null){
+            if (highlightMoves != null){ //when highlight moves is requested
                 for(ChessMove move : highlightMoves){
                     int moveRow = move.getEndPosition().getRow();
                     int moveCol = move.getEndPosition().getColumn();
