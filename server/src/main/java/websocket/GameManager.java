@@ -42,6 +42,9 @@ public class GameManager {
                 System.out.println("INVALID MOVE");
                throw new InvalidMoveException("You cannot promote with this move!");
             }
+            if(move.getPromotionPiece() == null && checkIfCanPromote(username, move, game, gameID)){
+                throw new InvalidMoveException("You must promote your pawn!");
+            }
 
             System.out.println("GAME MM: " + game);
             game.makeMove(move);
