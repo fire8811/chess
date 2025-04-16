@@ -81,13 +81,6 @@ public class BoardUI {
             moves.addAll(mirroredMoves);
         }
         drawBoard(teamColor, new ArrayList<>(moves));
-
-
-
-        //I'M THINKING WE JUST STORE THIS COLLECTION AND IN THE DRAW FUNCTION WE HAVE A CHECK
-        //TO SEE IF THE SQUARE POSITION IS IN THE COLLECTION AND THEN PRINT IT GREEN INSTEAD OF THE
-        //NORMAL COLOR. THIS WILL MEAN ADDITIONAL FLAG VARIABLES IN DRAW METHOD TO CHECK
-        //FOR NORMAL BOARD PRINTING OR PRINTING LEGAL MOVES AS WELL
     }
 
     private void printRow(PrintStream out, ArrayList<ChessPiece> row, int rowIndex, ArrayList<ChessMove> highlightMoves) {
