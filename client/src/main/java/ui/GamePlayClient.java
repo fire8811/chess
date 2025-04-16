@@ -90,15 +90,35 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     private String makeMove(String... params) {
         ChessPosition start = convertToChessPosition(params[0]);
         ChessPosition end = convertToChessPosition(params[1]);
-
-        ChessMove move = new ChessMove(start, end, null);
         String token = stageManager.getAuthToken();
         int gameID = stageManager.getGameID();
 
+        if (params.length > 2) {//promotion piece given
+            try{
+                ChessPiece.PieceType piece = convertToChessPiece(params[2]);
+                ChessMove move = new ChessMove(start, end, piece);
+                ws.makeMove(token, gameID, move, teamColor, params[0], params[1]);
+            } catch (Exception e) {
+                System.out.println(SET_TEXT_COLOR_RED + "Error: " + e.getMessage());
+            }
 
-        ws.makeMove(token, gameID, move, teamColor, params[0], params[1]);
+        }
+        else{ //normal move
+            ChessMove move = new ChessMove(start, end, null);
+            ws.makeMove(token, gameID, move, teamColor, params[0], params[1]);
+        }
 
         return "";
+    }
+
+    private ChessPiece.PieceType convertToChessPiece(String pieceString) {
+        return switch(pieceString){
+            case "rook" -> ChessPiece.PieceType.ROOK;
+            case "bishop" -> ChessPiece.PieceType.BISHOP;
+            case "knight" -> ChessPiece.PieceType.KNIGHT;
+            case "queen" -> ChessPiece.PieceType.QUEEN;
+            default -> throw new IllegalStateException("Not a valid chess piece: " + pieceString); //TODO: this does the long error message thing. FIX
+        };
     }
 
     private ChessPosition convertToChessPosition(String position) {

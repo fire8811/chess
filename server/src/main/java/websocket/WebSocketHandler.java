@@ -113,25 +113,17 @@ public class WebSocketHandler { //create one instance of the class and always ma
             String username = getUsername(command.getAuthToken(), session);
             System.out.println("USERNAME: " + username);
             var gameManager = gameManagerList.get(command.getGameID());
-            //System.out.println("gameManagerList keys: " + gameManagerList.keySet());
-            System.out.println("MM GAME MANAGER: " + gameManager);
-            //System.out.println("GAMEHASH MM: " + gameManagerList.get(command.getGameID()).getGame());
-            //System.out.println("CHESSGAME BEING USED: " + gameManagerList.get(command.getGameID()).getGame());
-
 
             gameManager.makeMove(username, command.getMove(), command.getGameID());
+
             gameManagerList.put(command.getGameID(), gameManager); //put updated game manager back into game manager list
             System.out.println("CHESSMOVE SUCCESS");
 
             LoadGameMessage loadGameMessage = new LoadGameMessage(gameManager.getGame(command.getGameID()), command.getTeamColor());
-            System.out.println("MAKE MOVE BROADCAST");
             connections.broadcastAll(loadGameMessage, command.getGameID());
-
 
             String notification = String.format("%s moved %s to %s", username,
                     command.getStartString(), command.getEndString());
-
-            System.out.println("MOVE SUCCESS");
             sendServerNotification(username, notification, command.getGameID());
 
             //check for check/checkmate
@@ -154,8 +146,7 @@ public class WebSocketHandler { //create one instance of the class and always ma
 
         } catch (RuntimeException | SQLException | DataAccessException e) {
 
-            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR" + e.getMessage());
-            System.out.println("MOVE ERROR: " + errorMessage);
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "MOVE ERROR" + e.getMessage());
             session.getRemote().sendString(new Gson().toJson(errorMessage));
         }
     }

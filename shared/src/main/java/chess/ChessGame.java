@@ -54,9 +54,14 @@ public class ChessGame {
         }
     }
 
-    public TeamColor getMovePieceColor(ChessMove move) {
-        ChessPiece piece = gameBoard.getPiece(move.getStartPosition());
-        return piece.getTeamColor();
+    public TeamColor getMovePieceColor(ChessMove move) throws InvalidMoveException {
+        try {
+            ChessPiece piece = gameBoard.getPiece(move.getStartPosition());
+            return piece.getTeamColor();
+        } catch (Exception e) {
+            throw new InvalidMoveException("Square is empty!");
+        }
+
     }
 
     public boolean isGameOver() {

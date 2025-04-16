@@ -36,7 +36,11 @@ public class GameManager {
                 throw new InvalidMoveException("Can't make this move!");
             }
             if(game.getBoard().getPiece(move.getStartPosition()) == null){
-                throw new InvalidMoveException("Square is empty!");
+                throw new InvalidMoveException("Square is empty or doesn't exist!");
+            }
+            if(move.getPromotionPiece() != null && !checkIfCanPromote(username, move, game, gameID)){
+                System.out.println("INVALID MOVE");
+               throw new InvalidMoveException("You cannot promote with this move!");
             }
 
             System.out.println("GAME MM: " + game);
@@ -48,6 +52,16 @@ public class GameManager {
         }
     }
 
+    private boolean checkIfCanPromote(String username, ChessMove move, ChessGame game, int gameID) throws InvalidMoveException {
+        if (game.getBoard().getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN){
+            if (username.equals(getWhiteUsername(gameID)) && move.getEndPosition().getRow() == 8) {return true;}
+            else if (username.equals(getBlackUsername(gameID)) && move.getEndPosition().getRow() == 1) {return true;}
+        }
+
+        return false;
+
+    }
+
     public boolean verifyTurn(String username, ChessGame game, int gameID) throws SQLException, AlreadyTakenException {
         String blackUsername = gameService.getUsernameByColor(ChessGame.TeamColor.BLACK, gameID);
         String whiteUsername = gameService.getUsernameByColor(ChessGame.TeamColor.WHITE, gameID);
@@ -56,7 +70,7 @@ public class GameManager {
                 ((Objects.equals(username, blackUsername) && game.getTeamTurn() == ChessGame.TeamColor.BLACK));
     }
 
-    private boolean verifyCorrectPiece(String username, ChessMove move, ChessGame game, int gameID) throws SQLException, AlreadyTakenException {
+    private boolean verifyCorrectPiece(String username, ChessMove move, ChessGame game, int gameID) throws SQLException, AlreadyTakenException, InvalidMoveException {
         String blackUsername = getBlackUsername(gameID);
         String whiteUsername = getWhiteUsername(gameID);
         System.out.println("USER: " + username);
@@ -86,7 +100,7 @@ public class GameManager {
 
     public void resign(int gameID){
         ChessGame game = getGame(gameID);
-        if (!isGameOver(gameID)){
+        if (!game.isGameOver()){
             game.setGameOver(true);
             gameService.updateGameInDatabase(gameID, game);
 
