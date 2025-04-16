@@ -89,15 +89,11 @@ public class Repl implements ServerMessageHandler {
     private void printBoard(LoadGameMessage message) {
         System.out.print(SET_TEXT_COLOR_MAGENTA + SET_TEXT_ITALIC + "CURRENT BOARD:\n" + RESET_TEXT_ITALIC);
         switch (stageManager.getStage()){
-            case POSTLOGIN -> {
-                postLoginClient.drawBoard(stageManager.getTeamColor(), message.getGame().getBoard());
-            }
             case IN_GAME -> {
-                gamePlayClient.drawBoard(stageManager.getTeamColor(), message.getGame().getBoard());
+                gamePlayClient.drawBoard(stageManager.getTeamColor(), message.getGame());
             }
             default -> throw new IllegalStateException("CANNOT DRAW BOARD: STAGE IS " + stageManager.getStage());
         }
-
         System.out.print("\n");
         printPrompt();
     }

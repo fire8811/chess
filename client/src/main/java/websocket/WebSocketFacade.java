@@ -131,4 +131,10 @@ public class WebSocketFacade extends Endpoint {
             System.out.print("Leave Error: " + e.getMessage());
         }
     }
+
+//    public void getChessMoves(String authToken, int gameID) {
+//        try {
+//            this.session.getBasicRemote()
+//        }
+//    }
 }

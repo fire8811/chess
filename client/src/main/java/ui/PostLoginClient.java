@@ -150,10 +150,4 @@ public class PostLoginClient implements Client {
 
         return String.format("OBSERVING GAME %s\n", gameNum);
     }
-
-
-    public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board) {
-        boardUI.updateBoard(board);
-        boardUI.drawBoard(teamColor);
-    }
 }

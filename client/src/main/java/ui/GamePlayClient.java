@@ -40,6 +40,7 @@ public class GamePlayClient implements Client, ServerMessageHandler {
                 case "leave" -> leaveGame();
                 case "move" -> makeMove(params);
                 case "resign" -> resign();
+                case "moves" -> showLegalMoves(params);
                 default -> help();
             };
 
@@ -48,8 +49,14 @@ public class GamePlayClient implements Client, ServerMessageHandler {
         }
     }
 
+    private String showLegalMoves(String... params) {
+        ChessPosition piecePosition = convertToChessPosition(params[0]);
+        boardUI.drawMoves(piecePosition, stageManager.getTeamColor());
+        return "";
+    }
+
     private String redrawBoard() {
-        boardUI.drawBoard(teamColor);
+        boardUI.drawBoard(teamColor, null);
         return "";
     }
 
@@ -86,10 +93,10 @@ public class GamePlayClient implements Client, ServerMessageHandler {
         return new ChessPosition(row, col);
     }
 
-    public void drawBoard(ChessGame.TeamColor teamColor, ChessBoard board){
+    public void drawBoard(ChessGame.TeamColor teamColor, ChessGame game){
         this.teamColor = teamColor;
-        boardUI.updateBoard(board);
-        boardUI.drawBoard(teamColor);
+        boardUI.updateBoard(game);
+        boardUI.drawBoard(teamColor, null);
     }
 
     private String help() {
