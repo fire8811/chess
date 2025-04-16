@@ -134,10 +134,27 @@ public class WebSocketHandler { //create one instance of the class and always ma
             System.out.println("MOVE SUCCESS");
             sendServerNotification(username, notification, command.getGameID());
 
+            //check for check/checkmate
+            if(gameManager.checkmateCheck(command.getGameID(), username)){
+                System.out.println("CHECKMATE");
+                String checkmateNotification = String.format("Game Over! %s checkmated %s",
+                        username, gameManager.getOppositeUsername(command.getGameID(), username));
+
+                var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkmateNotification);
+                connections.broadcastAll(notificationMessage, command.getGameID());
+
+            } else if (gameManager.checkforCheck(command.getGameID(), username)){
+                String checkNotification = String.format("%s put %s in check",
+                        username, gameManager.getOppositeUsername(command.getGameID(), username));
+
+                var notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, checkNotification);
+                connections.broadcastAll(notificationMessage, command.getGameID());
+            }
+
 
         } catch (RuntimeException | SQLException | DataAccessException e) {
 
-            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR: " + e.getMessage());
+            var errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "ERROR" + e.getMessage());
             System.out.println("MOVE ERROR: " + errorMessage);
             session.getRemote().sendString(new Gson().toJson(errorMessage));
         }

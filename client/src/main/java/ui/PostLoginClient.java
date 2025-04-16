@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
+
 public class PostLoginClient implements Client {
     private final ServerFacade server;
     private final String url;
@@ -133,7 +135,7 @@ public class PostLoginClient implements Client {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new ResponseException("Team is full or the game doesn't exist\n");
+            throw new ResponseException(SET_TEXT_COLOR_RED + "Team is full or the game doesn't exist\n");
         }
 
     }

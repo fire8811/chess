@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 import static websocket.commands.UserGameCommand.CommandType.*;
 
 //client side
@@ -94,7 +95,7 @@ public class WebSocketFacade extends Endpoint {
 
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException e) {
-            System.out.println("ERRRRROR: " + e.getMessage());
+            System.out.println(SET_TEXT_COLOR_RED + "ERRRRROR: " + e.getMessage());
         }
     }
 
@@ -107,7 +108,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
         } catch (IOException e) {
-            System.out.println("makemoveerror: " + e.getMessage());
+            System.out.println(SET_TEXT_COLOR_RED + "makemoveerror: " + e.getMessage());
         }
     }
 
@@ -117,7 +118,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
         } catch (IOException e) {
-            System.out.print("Resign Error: " + e.getMessage());
+            System.out.print(SET_TEXT_COLOR_RED + "Resign Error: " + e.getMessage());
         }
 
     }
@@ -128,7 +129,7 @@ public class WebSocketFacade extends Endpoint {
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
 
         } catch (IOException e){
-            System.out.print("Leave Error: " + e.getMessage());
+            System.out.print(SET_TEXT_COLOR_RED + "Leave Error: " + e.getMessage());
         }
     }
 

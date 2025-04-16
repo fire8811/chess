@@ -26,21 +26,18 @@ public class GameManager {
         try {
             ChessGame game = gameService.getGame(gameID); //get game from database
 
-            if (isGameOver(gameID)){
-                System.out.println("GAME HAS ENDED");
-                throw new InvalidMoveException("Game has ended!");
+            if(game.isGameOver()){
+                throw new InvalidMoveException("The Game is Over!");
             }
-
-            if (!verifyCorrectPiece(username, move, game, gameID)){
-                System.out.println("MAKEMOVE FAIL");
-                throw new InvalidMoveException("Can't make this move!");
-            }
-
             if (!verifyTurn(username, game, gameID)){
                 throw new InvalidMoveException("It's not your turn!");
             };
-
-
+            if (!verifyCorrectPiece(username, move, game, gameID)){
+                throw new InvalidMoveException("Can't make this move!");
+            }
+            if(game.getBoard().getPiece(move.getStartPosition()) == null){
+                throw new InvalidMoveException("Square is empty!");
+            }
 
             System.out.println("GAME MM: " + game);
             game.makeMove(move);
@@ -122,6 +119,33 @@ public class GameManager {
             return gameService.getGame(gameID);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public String getOppositeUsername(int gameID, String username){
+        if(username.equals(getWhiteUsername(gameID))){
+            return getBlackUsername(gameID);
+        } else {
+            return getWhiteUsername(gameID);
+        }
+    }
+
+    public boolean checkmateCheck(int gameID, String username) {
+        System.out.println("CHECKING CHECKMATE");
+        ChessGame game = getGame(gameID);
+        if(username.equals(getWhiteUsername(gameID))){
+            return game.isInCheckmate(ChessGame.TeamColor.BLACK);
+        } else {
+            return game.isInCheckmate(ChessGame.TeamColor.WHITE);
+        }
+    }
+
+    public boolean checkforCheck(int gameID, String username) {
+        ChessGame game = getGame(gameID);
+        if(username.equals(getWhiteUsername(gameID))){
+            return game.isInCheck(ChessGame.TeamColor.BLACK);
+        } else {
+            return game.isInCheck(ChessGame.TeamColor.WHITE);
         }
     }
 }

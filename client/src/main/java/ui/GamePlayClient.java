@@ -6,8 +6,10 @@ import serverfacade.ServerFacade;
 import websocket.ServerMessageHandler;
 import websocket.WebSocketFacade;
 import websocket.messages.ServerMessage;
+import static ui.EscapeSequences.*;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class GamePlayClient implements Client, ServerMessageHandler {
     private final ServerFacade server;
@@ -50,8 +52,13 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private String showLegalMoves(String... params) {
-        ChessPosition piecePosition = convertToChessPosition(params[0]);
-        boardUI.drawMoves(piecePosition, stageManager.getTeamColor());
+        try{
+            ChessPosition piecePosition = convertToChessPosition(params[0]);
+            boardUI.drawMoves(piecePosition, stageManager.getTeamColor());
+        } catch(Exception e){
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid Move!");
+        }
+
         return "";
     }
 
@@ -68,8 +75,16 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private String resign() {
-        ws.resign(stageManager.getAuthToken(), stageManager.getGameID());
-        return "You resigned!";
+        Scanner in = new Scanner(System.in);
+        System.out.print("Type 'yes' to confirm: ");
+        String result = in.nextLine();
+
+        if (result.toLowerCase().equals("yes") || result.toLowerCase().equals("y")){
+            ws.resign(stageManager.getAuthToken(), stageManager.getGameID());
+            return "You resigned!";
+        }
+
+        return "The game goes on...";
     }
 
     private String makeMove(String... params) {
@@ -87,10 +102,15 @@ public class GamePlayClient implements Client, ServerMessageHandler {
     }
 
     private ChessPosition convertToChessPosition(String position) {
-        int row = Integer.parseInt(position.substring(1));
-        int col = position.charAt(0) - 'a' + 1;
+        try{
+            int row = Integer.parseInt(position.substring(1));
+            int col = position.charAt(0) - 'a' + 1;
 
-        return new ChessPosition(row, col);
+            return new ChessPosition(row, col);
+        } catch (Exception e){
+            throw new ResponseException(SET_TEXT_COLOR_RED + "Invalid Chess Position!");
+        }
+
     }
 
     public void drawBoard(ChessGame.TeamColor teamColor, ChessGame game){

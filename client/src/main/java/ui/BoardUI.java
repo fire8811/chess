@@ -32,7 +32,7 @@ public class BoardUI {
         String[] rowNums = teamColor == ChessGame.TeamColor.WHITE ? WHITE_ROW_NUMS : BLACK_ROW_NUMS;
 
         drawColLabels(out, colLetters);
-        squareIsWhite = false;
+        squareIsWhite = true;
 
         for(String rowLabel : rowNums){
             int index = Integer.parseInt(rowLabel.trim()) - 1; //extract number out of row string " 1 " -> 1
@@ -57,9 +57,8 @@ public class BoardUI {
 
     public void drawMoves(ChessPosition position, ChessGame.TeamColor teamColor){
         ChessPiece piece = board.getPiece(position);
-        System.out.println(position);
         if(piece == null){
-            throw new ResponseException("Square Empty!");
+            throw new ResponseException(SET_TEXT_COLOR_RED + "Square Empty!");
         }
 
         Collection<ChessMove> moves = game.validMoves(position);
@@ -97,6 +96,7 @@ public class BoardUI {
             }
 
             //prints proper team of chesspiece
+
             if (boardSquare != null && boardSquare.getTeamColor() == ChessGame.TeamColor.WHITE){
                 whitePiece(out);
             }
